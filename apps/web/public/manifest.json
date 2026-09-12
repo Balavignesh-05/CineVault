@@ -1,0 +1,22 @@
+{
+  "short_name": "CineVault",
+  "name": "CineVault — AI Movie Platform & Social Film Community",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0d0f12",
+  "theme_color": "#e50914",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Discover, track, rate, review, and get AI-powered movie recommendations on CineVault."
+}

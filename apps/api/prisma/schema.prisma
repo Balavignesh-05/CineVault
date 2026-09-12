@@ -1,0 +1,667 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  guest
+  member
+  moderator
+  admin
+}
+
+enum WatchlistStatus {
+  planned
+  watching
+  watched
+}
+
+enum AchievementTier {
+  bronze
+  silver
+  gold
+  diamond
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique @db.VarChar(30)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String?  @map("password_hash")
+  displayName  String   @map("display_name") @db.VarChar(60)
+  bio          String?  @db.Text
+  avatarUrl    String?  @map("avatar_url")
+  profileBackdropUrl String? @map("profile_backdrop_url")
+  website      String?
+  location     String?
+  isPrivate    Boolean  @default(false) @map("is_private")
+  isVerified   Boolean  @default(false) @map("is_verified")
+  role         UserRole @default(member)
+  status       String   @default("active")
+  favoriteFilmIds String[] @default([]) @map("favorite_film_ids")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  preferences  UserPreferences?
+  sessions     Session[]
+  oauthAccounts OAuthAccount[]
+  filmLogs     FilmLog[]
+  seriesLogs   SeriesLog[]
+  reviews      Review[]
+  reviewLikes  ReviewLike[]
+  reviewComments ReviewComment[]
+  commentLikes ReviewCommentLike[]
+  watchlistItems WatchlistItem[]
+  likedFilms   LikedFilm[]
+  lists        List[]
+  listLikes    ListLike[]
+  notifications Notification[] @relation("NotificationRecipient")
+  actorNotifications Notification[] @relation("NotificationActor")
+  userAchievements UserAchievement[]
+  recommendations  Recommendation[]
+  reviewHelpfuls   ReviewHelpful[]
+  following    Follow[] @relation("Follower")
+  followers    Follow[] @relation("Following")
+  userFilmTags UserFilmTag[]
+  reports      Report[] @relation("Reporter")
+  episodeLogs  EpisodeLog[]
+  likedSeries  LikedSeries[]
+  watchlistSeries WatchlistSeries[]
+  customPosters CustomPoster[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at") @db.Timestamptz
+  userAgent String?  @map("user_agent")
+  ipAddress String?  @map("ip_address")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("sessions")
+}
+
+model OAuthAccount {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider       String
+  providerUserId String   @map("provider_user_id")
+  accessToken    String?  @map("access_token")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@unique([provider, providerUserId])
+  @@map("oauth_accounts")
+}
+
+model Genre {
+  id         Int         @id
+  name       String      @db.VarChar(100)
+  slug       String      @unique @db.VarChar(100)
+  filmGenres FilmGenre[]
+
+  @@map("genres")
+}
+
+model Film {
+  id            String      @id @default(uuid())
+  tmdbId        Int         @unique @map("tmdb_id")
+  imdbId        String?     @map("imdb_id")
+  title         String      @db.VarChar(255)
+  originalTitle String      @map("original_title") @db.VarChar(255)
+  slug          String      @unique @db.VarChar(300)
+  releaseDate   DateTime?   @map("release_date") @db.Date
+  runtime       Int?
+  overview      String?     @db.Text
+  tagline       String?
+  posterUrl     String?     @map("poster_url")
+  backdropUrl   String?     @map("backdrop_url")
+  language      String?     @db.VarChar(10)
+  country       String?     @db.VarChar(10)
+  budget        BigInt?     @default(0)
+  revenue       BigInt?     @default(0)
+  avgRating     Decimal?    @map("avg_rating") @db.Decimal(3, 2)
+  ratingCount   Int         @default(0) @map("rating_count")
+  cachedAt      DateTime?   @map("cached_at") @db.Timestamptz
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  genres        FilmGenre[]
+  credits       FilmCredit[]
+  filmLogs      FilmLog[]
+  reviews       Review[]
+  watchlistItems WatchlistItem[]
+  likedFilms    LikedFilm[]
+  listFilms     ListFilm[]
+  userFilmTags  UserFilmTag[]
+
+  @@index([title])
+  @@map("films")
+}
+
+model FilmGenre {
+  filmId  String @map("film_id")
+  genreId Int    @map("genre_id")
+  film    Film   @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  genre   Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([filmId, genreId])
+  @@map("film_genres")
+}
+
+model Series {
+  id            String      @id @default(uuid())
+  tmdbId        Int         @unique @map("tmdb_id")
+  imdbId        String?     @map("imdb_id")
+  title         String      @db.VarChar(255)
+  originalTitle String      @map("original_title") @db.VarChar(255)
+  slug          String      @unique @db.VarChar(300)
+  firstAirDate  DateTime?   @map("first_air_date") @db.Date
+  lastAirDate   DateTime?   @map("last_air_date") @db.Date
+  status        String?
+  overview      String?     @db.Text
+  posterUrl     String?     @map("poster_url")
+  backdropUrl   String?     @map("backdrop_url")
+  avgRating     Decimal?    @map("avg_rating") @db.Decimal(3, 2)
+  ratingCount   Int         @default(0) @map("rating_count")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  seasons       Season[]
+  seriesLogs    SeriesLog[]
+  reviews       Review[]
+  likedBy       LikedSeries[]
+  watchlistedBy WatchlistSeries[]
+
+  @@index([title])
+  @@map("series")
+}
+
+model Season {
+  id            String      @id @default(uuid())
+  tmdbId        Int         @unique @map("tmdb_id")
+  seriesId      String      @map("series_id")
+  series        Series      @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seasonNumber  Int         @map("season_number")
+  name          String
+  overview      String?     @db.Text
+  posterUrl     String?     @map("poster_url")
+  airDate       DateTime?   @map("air_date") @db.Date
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  episodes      Episode[]
+
+  @@unique([seriesId, seasonNumber])
+  @@map("seasons")
+}
+
+model Episode {
+  id            String      @id @default(uuid())
+  tmdbId        Int         @unique @map("tmdb_id")
+  seasonId      String      @map("season_id")
+  season        Season      @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  episodeNumber Int         @map("episode_number")
+  name          String
+  overview      String?     @db.Text
+  airDate       DateTime?   @map("air_date") @db.Date
+  runtime       Int?
+  stillUrl      String?     @map("still_url")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  logs          EpisodeLog[]
+
+  @@unique([seasonId, episodeNumber])
+  @@map("episodes")
+}
+
+model EpisodeLog {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  episodeId   String    @map("episode_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  episode     Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  watchedDate DateTime? @map("watched_date") @db.Date
+  rating      Decimal?  @db.Decimal(2, 1)
+  liked       Boolean   @default(false)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId])
+  @@index([episodeId])
+  @@map("episode_logs")
+}
+
+model LikedSeries {
+  userId    String   @map("user_id")
+  seriesId  String   @map("series_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@id([userId, seriesId])
+  @@map("liked_series")
+}
+
+model WatchlistSeries {
+  id        String          @id @default(uuid())
+  userId    String          @map("user_id")
+  seriesId  String          @map("series_id")
+  status    WatchlistStatus @default(planned)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  series    Series          @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  addedAt   DateTime        @default(now()) @map("added_at") @db.Timestamptz
+
+  @@unique([userId, seriesId])
+  @@map("watchlist_series")
+}
+
+
+model Person {
+  id                  String       @id @default(uuid())
+  tmdbId              Int          @unique @map("tmdb_id")
+  name                String       @db.VarChar(255)
+  slug                String       @unique @db.VarChar(300)
+  profileUrl          String?      @map("profile_url")
+  biography           String?      @db.Text
+  birthday            DateTime?    @db.Date
+  placeOfBirth        String?      @map("place_of_birth")
+  knownForDepartment  String?      @map("known_for_department")
+  createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  credits FilmCredit[]
+
+  @@map("people")
+}
+
+enum CreditRole {
+  actor
+  director
+  writer
+  producer
+  composer
+  cinematographer
+  editor
+}
+
+model FilmCredit {
+  id        String     @id @default(uuid())
+  filmId    String     @map("film_id")
+  personId  String     @map("person_id")
+  film      Film       @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  person    Person     @relation(fields: [personId], references: [id], onDelete: Cascade)
+  role      CreditRole
+  character String?
+  order     Int?
+
+  @@unique([filmId, personId, role])
+  @@map("film_credits")
+}
+
+model FilmLog {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  filmId      String    @map("film_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  film        Film      @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  watchedDate DateTime? @map("watched_date") @db.Date
+  isRewatch   Boolean   @default(false) @map("is_rewatch")
+  rating      Decimal?  @db.Decimal(2, 1)
+  liked       Boolean   @default(false)
+  notes       String?   @db.Text
+  tags        String[]  @default([])
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  review Review?
+
+  @@index([userId])
+  @@index([filmId])
+  @@index([watchedDate])
+  @@map("film_logs")
+}
+
+model SeriesLog {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  seriesId    String    @map("series_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  series      Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  watchedDate DateTime? @map("watched_date") @db.Date
+  isRewatch   Boolean   @default(false) @map("is_rewatch")
+  rating      Decimal?  @db.Decimal(2, 1)
+  liked       Boolean   @default(false)
+  notes       String?   @db.Text
+  tags        String[]  @default([])
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  review Review?
+
+  @@index([userId])
+  @@index([seriesId])
+  @@index([watchedDate])
+  @@map("series_logs")
+}
+
+model Review {
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  filmId           String?   @map("film_id")
+  seriesId         String?   @map("series_id")
+  logId            String?   @unique @map("log_id")
+  seriesLogId      String?   @unique @map("series_log_id")
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  film             Film?     @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  series           Series?   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  log              FilmLog?  @relation(fields: [logId], references: [id])
+  seriesLog        SeriesLog? @relation(fields: [seriesLogId], references: [id])
+  body             String    @db.Text
+  containsSpoilers Boolean   @default(false) @map("contains_spoilers")
+  isPublished      Boolean   @default(true) @map("is_published")
+  isFeatured       Boolean   @default(false) @map("is_featured")
+  isApproved       Boolean   @default(true) @map("is_approved")
+  likeCount        Int       @default(0) @map("like_count")
+  commentCount     Int       @default(0) @map("comment_count")
+  helpfulCount     Int       @default(0) @map("helpful_count")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  likes           ReviewLike[]
+  comments        ReviewComment[]
+  reports         Report[]
+  helpfuls        ReviewHelpful[]
+
+  @@index([userId])
+  @@index([filmId])
+  @@map("reviews")
+}
+
+model ReviewLike {
+  userId    String   @map("user_id")
+  reviewId  String   @map("review_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@id([userId, reviewId])
+  @@map("review_likes")
+}
+
+model ReviewHelpful {
+  userId    String   @map("user_id")
+  reviewId  String   @map("review_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@id([userId, reviewId])
+  @@map("review_helpfuls")
+}
+
+model ReviewComment {
+  id        String              @id @default(uuid())
+  reviewId  String              @map("review_id")
+  userId    String              @map("user_id")
+  parentId  String?             @map("parent_id")
+  review    Review              @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent    ReviewComment?      @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   ReviewComment[]     @relation("CommentReplies")
+  likes     ReviewCommentLike[]
+  likeCount Int                 @default(0) @map("like_count")
+  body      String              @db.Text
+  createdAt DateTime            @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([reviewId])
+  @@map("review_comments")
+}
+
+model WatchlistItem {
+  id      String          @id @default(uuid())
+  userId  String          @map("user_id")
+  filmId  String          @map("film_id")
+  status  WatchlistStatus @default(planned)
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  film    Film            @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  addedAt DateTime        @default(now()) @map("added_at") @db.Timestamptz
+
+  @@unique([userId, filmId])
+  @@map("watchlist_items")
+}
+
+model LikedFilm {
+  userId    String   @map("user_id")
+  filmId    String   @map("film_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@id([userId, filmId])
+  @@map("liked_films")
+}
+
+model FilmTag {
+  id           String        @id @default(uuid())
+  name         String        @unique @db.VarChar(50)
+  userFilmTags UserFilmTag[]
+
+  @@map("film_tags")
+}
+
+model UserFilmTag {
+  userId    String   @map("user_id")
+  filmId    String   @map("film_id")
+  tagId     String   @map("tag_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  tag       FilmTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@id([userId, filmId, tagId])
+  @@map("user_film_tags")
+}
+
+model List {
+  id            String     @id @default(uuid())
+  userId        String     @map("user_id")
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String     @db.VarChar(255)
+  slug          String     @db.VarChar(300)
+  description   String?    @db.Text
+  coverImageUrl String?    @map("cover_image_url")
+  isPublic      Boolean    @default(true) @map("is_public")
+  isRanked      Boolean    @default(false) @map("is_ranked")
+  isPublished   Boolean    @default(true) @map("is_published")
+  isFeatured    Boolean    @default(false) @map("is_featured")
+  likeCount     Int        @default(0) @map("like_count")
+  filmCount     Int        @default(0) @map("film_count")
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+
+  films ListFilm[]
+  likes ListLike[]
+
+  @@unique([userId, slug])
+  @@map("lists")
+}
+
+model ListFilm {
+  listId   String  @map("list_id")
+  filmId   String  @map("film_id")
+  list     List    @relation(fields: [listId], references: [id], onDelete: Cascade)
+  film     Film    @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  position Int     @default(0)
+  note     String? @db.Text
+
+  @@id([listId, filmId])
+  @@map("list_films")
+}
+
+model ListLike {
+  userId    String   @map("user_id")
+  listId    String   @map("list_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@id([userId, listId])
+  @@map("list_likes")
+}
+
+model Follow {
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@id([followerId, followingId])
+  @@map("follows")
+}
+
+enum NotificationType {
+  follow
+  like
+  comment
+  mention
+}
+
+model Notification {
+  id          String           @id @default(uuid())
+  recipientId String           @map("recipient_id")
+  actorId     String           @map("actor_id")
+  recipient   User             @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  actor       User             @relation("NotificationActor", fields: [actorId], references: [id], onDelete: Cascade)
+  type        NotificationType
+  entityType  String           @map("entity_type")
+  entityId    String           @map("entity_id")
+  readAt      DateTime?        @map("read_at") @db.Timestamptz
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([recipientId])
+  @@map("notifications")
+}
+
+model Report {
+  id         String   @id @default(uuid())
+  reporterId String   @map("reporter_id")
+  reporter   User     @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id")
+  reviewId   String?  @map("review_id")
+  review     Review?  @relation(fields: [reviewId], references: [id])
+  reason     String   @db.Text
+  status     String   @default("pending")
+  resolvedBy String?  @map("resolved_by")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("reports")
+}
+
+// ── Achievement System ────────────────────────────────────────────────────────
+
+model Achievement {
+  id          String          @id @default(uuid())
+  key         String          @unique @db.VarChar(100)
+  title       String          @db.VarChar(100)
+  description String          @db.Text
+  tier        AchievementTier @default(bronze)
+  iconName    String          @map("icon_name") @db.VarChar(50)
+  requirement Int             @default(1)
+  category    String          @db.VarChar(50)
+  isAnimated  Boolean         @default(false) @map("is_animated")
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String      @id @default(uuid())
+  userId        String      @map("user_id")
+  achievementId String      @map("achievement_id")
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  progress      Int         @default(0)
+  unlockedAt    DateTime?   @map("unlocked_at") @db.Timestamptz
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+// ── Recommendation Engine ─────────────────────────────────────────────────────
+
+model Recommendation {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  tmdbId     Int      @map("tmdb_id")
+  score      Float
+  reason     String   @db.Text
+  category   String   @db.VarChar(100)
+  isViewed   Boolean  @default(false) @map("is_viewed")
+  expiresAt  DateTime @map("expires_at") @db.Timestamptz
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, category])
+  @@map("recommendations")
+}
+
+// ── Review Comments (extended: parentId for nesting, likes) ───────────────────
+
+model ReviewCommentLike {
+  userId    String        @map("user_id")
+  commentId String        @map("comment_id")
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment   ReviewComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  @@id([userId, commentId])
+  @@map("review_comment_likes")
+}
+
+model AdminLog {
+  id         String   @id @default(uuid())
+  adminId    String   @map("admin_id")
+  action     String   @db.VarChar(100)
+  targetType String   @map("target_type") @db.VarChar(50)
+  targetId   String   @map("target_id")
+  details    String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([adminId])
+  @@map("admin_logs")
+}
+
+model UserPreferences {
+  id                 String   @id @default(uuid())
+  userId             String   @unique @map("user_id")
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailNotifications Boolean  @default(true) @map("email_notifications")
+  pushNotifications  Boolean  @default(true) @map("push_notifications")
+  theme              String   @default("system")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("user_preferences")
+}
+
+model CustomPoster {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tmdbId    Int      @map("tmdb_id")
+  posterUrl String   @map("poster_url")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@unique([userId, tmdbId])
+  @@map("custom_posters")
+}
+

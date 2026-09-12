@@ -1,0 +1,59 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build outputs
+.next
+dist
+build
+out
+*.tsbuildinfo
+
+# Env files
+.env
+.env.*
+.env*.local
+!.env.example
+!.env.*.example
+
+# Logs
+*.log
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Temporary / Scratch / Test files
+cookies.txt
+errors.txt
+error_log.txt
+test-results/
+scratch/
+test-*.js
+test-*.ps1
+verify.spec.js
+playwright-test.js
+create_pages.js
+script.js
+extract.js
+dns-check.js
+check_db.js
+db_audit.js
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Turbo
+.turbo
+
+# Editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# Coverage
+coverage

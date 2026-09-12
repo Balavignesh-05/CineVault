@@ -1,0 +1,135 @@
+/* ============================================================
+   CineVault Global CSS Design System — Letterboxd & IMDb Theme
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* ── Letterboxd & IMDb Design Tokens ───────────────────────── */
+
+:root,
+[data-theme="dark"] {
+  /* Letterboxd Exact Color Palette */
+  
+  /* Background Hierarchy */
+  --color-bg-base: #14181c;
+  --color-bg-surface: #2c3440;
+  --color-bg-elevated: #456;
+  --color-bg-overlay: rgba(20, 24, 28, 0.9);
+  --color-bg-hover: #363c47;
+
+  /* Borders */
+  --color-border-subtle: rgba(255, 255, 255, 0.07);
+  --color-border-default: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.2);
+
+  /* Primary Brand Accent (Letterboxd Green = watched) */
+  --color-accent-primary: #00e054;
+  --color-accent-primary-hover: #00c745;
+  --color-accent-primary-muted: rgba(0, 224, 84, 0.15);
+
+  /* Blue accent (Letterboxd blue = watchlist) */
+  --color-accent-tertiary: #40bcf4;
+  --color-accent-tertiary-hover: #20acf0;
+  --color-accent-tertiary-muted: rgba(64, 188, 244, 0.15);
+
+  /* Orange accent (star ratings) */
+  --color-accent-amber: #ff8000;
+
+  /* Typography Colors */
+  --color-text-primary: #fff;
+  --color-text-secondary: #9ab;
+  --color-text-muted: #678;
+  --color-text-disabled: #456;
+  --color-text-inverse: #14181c;
+
+  /* Status Colors */
+  --color-success: #00e054;
+  --color-error: #f44;
+  --color-warning: #ff8000;
+  --color-info: #40bcf4;
+
+  /* Gradients */
+  --gradient-hero: linear-gradient(180deg, rgba(20, 24, 28, 0) 0%, rgba(20, 24, 28, 0.85) 60%, #14181c 100%);
+  --gradient-card: linear-gradient(180deg, rgba(44, 52, 64, 0) 0%, rgba(44, 52, 64, 0.95) 100%);
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+
+  /* Z-Index Hierarchy */
+  --z-base: 0;
+  --z-elevated: 10;
+  --z-dropdown: 40;
+  --z-sticky: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+}
+
+/* ── Reset & General Styles ────────────────────────────────── */
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-secondary);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif; /* Moving away from Outfit for cleaner District style */
+  color: var(--color-text-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* ── Custom Utilities ──────────────────────────────────────── */
+
+.glass-panel {
+  background: rgba(20, 23, 27, 0.6);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.glass-header {
+  background: rgba(11, 13, 15, 0.85);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.hover-lift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}

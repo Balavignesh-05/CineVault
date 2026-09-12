@@ -1,0 +1,135 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.posterLink {
+  display: block;
+  text-decoration: none;
+}
+
+.posterWrap {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-md);
+}
+
+.posterImg {
+  object-fit: cover;
+  transition: filter var(--transition-slow), transform var(--transition-slow);
+}
+
+.card:hover .posterImg {
+  filter: brightness(0.65);
+  transform: scale(1.04);
+}
+
+.posterFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-card);
+}
+
+.posterFallbackLetter {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 6cqi, 48px);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+/* ── Overlay ─────────────────────────────── */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-poster);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-2);
+}
+
+.card:hover .overlay {
+  opacity: 1;
+}
+
+.overlayActions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.overlayBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: rgba(10, 10, 15, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(4px);
+}
+
+.overlayBtn:hover {
+  background: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+  transform: scale(1.1);
+}
+
+.overlayRating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+  background: rgba(10, 10, 15, 0.7);
+  backdrop-filter: blur(4px);
+  padding: 3px 6px;
+  border-radius: var(--radius-full);
+  width: fit-content;
+}
+
+/* ── Info ────────────────────────────────── */
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 2px;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--transition-fast);
+  line-height: 1.3;
+}
+
+.title:hover {
+  color: var(--color-accent-primary);
+}
+
+.year {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
