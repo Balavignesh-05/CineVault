@@ -3,7 +3,7 @@ services:
     name: cinevault-api
     runtime: node
     plan: free
-    buildCommand: pnpm install --frozen-lockfile && cd apps/api && pnpm prisma generate && pnpm prisma:deploy && pnpm build
+    buildCommand: pnpm install --frozen-lockfile --prod=false && cd apps/api && pnpm prisma generate && pnpm prisma:deploy && pnpm build
     startCommand: cd apps/api && pnpm start
     healthCheckPath: /health
     envVars:
