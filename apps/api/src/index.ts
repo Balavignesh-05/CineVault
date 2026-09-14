@@ -101,54 +101,9 @@ app.use('/api/v1/settings', settingsRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-function logDatabaseDiagnostic() {
-  const rawUrl = process.env.DATABASE_URL;
-  console.log('DATABASE_URL runtime diagnostic:');
-  if (!rawUrl) {
-    console.log('- PRESENT: NO');
-    console.log('- PROTOCOL: INVALID');
-    console.log('- HOST: MISSING');
-    console.log('- PORT: default');
-    console.log('- IS_LOCALHOST: NO');
-    console.log('- HAS_LEADING_QUOTE: NO');
-    console.log('- HAS_TRAILING_QUOTE: NO');
-    console.log('- LENGTH: 0');
-  } else {
-    console.log('- PRESENT: YES');
-    const hasLeading = rawUrl.startsWith('"') || rawUrl.startsWith("'");
-    const hasTrailing = rawUrl.endsWith('"') || rawUrl.endsWith("'");
-    const unquoted = hasLeading && hasTrailing ? rawUrl.slice(1, -1) : rawUrl;
-    try {
-      const parsed = new URL(unquoted);
-      console.log(`- PROTOCOL: ${parsed.protocol}`);
-      console.log(`- HOST: ${parsed.hostname || 'MISSING'}`);
-      console.log(`- PORT: ${parsed.port || 'default'}`);
-      console.log(`- IS_LOCALHOST: ${parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1' ? 'YES' : 'NO'}`);
-    } catch {
-      console.log('- PROTOCOL: INVALID');
-      console.log('- HOST: MISSING');
-      console.log('- PORT: default');
-      console.log('- IS_LOCALHOST: NO');
-    }
-    console.log(`- HAS_LEADING_QUOTE: ${hasLeading ? 'YES' : 'NO'}`);
-    console.log(`- HAS_TRAILING_QUOTE: ${hasTrailing ? 'YES' : 'NO'}`);
-    console.log(`- LENGTH: ${rawUrl.length}`);
-  }
-
-  try {
-    const configUrl = new URL(config.databaseUrl);
-    console.log('Prisma datasource override: ENABLED');
-    console.log(`Prisma database host: ${configUrl.hostname}`);
-    console.log(`Prisma database port: ${configUrl.port || 'default'}`);
-  } catch {
-    console.log('Prisma datasource override: ENABLED (unparseable)');
-  }
-}
-
 // ── Server Startup ────────────────────────────────────────────────────────────
 async function bootstrap() {
   try {
-    logDatabaseDiagnostic();
     await prisma.$connect().catch((err) => console.warn('⚠️ PostgreSQL connection deferred:', err.message));
     await redis.ping().catch((err) => console.warn('⚠️ Redis connection deferred:', err.message));
 
