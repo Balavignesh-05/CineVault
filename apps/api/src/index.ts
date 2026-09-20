@@ -40,6 +40,8 @@ import { rateLimiter } from './middleware/rateLimiter';
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // ── Security & Performance ────────────────────────────────────────────────────
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(compression());
