@@ -24,46 +24,33 @@ router.get('/:username', async (req, res, next) => {
 
     const userId = user.id;
 
-    const [
-      moviesWatched,
-      reviewsWritten,
-      collectionsCreated,
-      followersCount,
-      followingCount,
-      filmLogs,
-      achievements,
-      recentRatings,
-      recentReviews,
-      collections
-    ] = await Promise.all([
-      prisma.filmLog.count({ where: { userId } }),
-      prisma.review.count({ where: { userId, isPublished: true } }),
-      prisma.list.count({ where: { userId, isPublic: true } }),
-      prisma.follow.count({ where: { followingId: userId } }),
-      prisma.follow.count({ where: { followerId: userId } }),
-      prisma.filmLog.findMany({
-        where: { userId },
-        include: { film: { include: { genres: { include: { genre: true } } } } }
-      }),
-      prisma.userAchievement.findMany({ where: { userId, unlockedAt: { not: null } } }),
-      prisma.filmLog.findMany({
-        where: { userId, rating: { not: null } },
-        include: { film: true },
-        orderBy: { createdAt: 'desc' },
-        take: 5
-      }),
-      prisma.review.findMany({
-        where: { userId, isPublished: true },
-        include: { film: true },
-        orderBy: { createdAt: 'desc' },
-        take: 5
-      }),
-      prisma.list.findMany({
-        where: { userId, isPublic: true },
-        orderBy: { createdAt: 'desc' },
-        take: 5
-      }),
-    ]);
+    const moviesWatched = await prisma.filmLog.count({ where: { userId } });
+    const reviewsWritten = await prisma.review.count({ where: { userId, isPublished: true } });
+    const collectionsCreated = await prisma.list.count({ where: { userId, isPublic: true } });
+    const followersCount = await prisma.follow.count({ where: { followingId: userId } });
+    const followingCount = await prisma.follow.count({ where: { followerId: userId } });
+    const filmLogs = await prisma.filmLog.findMany({
+      where: { userId },
+      include: { film: { include: { genres: { include: { genre: true } } } } }
+    });
+    const achievements = await prisma.userAchievement.findMany({ where: { userId, unlockedAt: { not: null } } });
+    const recentRatings = await prisma.filmLog.findMany({
+      where: { userId, rating: { not: null } },
+      include: { film: true },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    });
+    const recentReviews = await prisma.review.findMany({
+      where: { userId, isPublished: true },
+      include: { film: true },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    });
+    const collections = await prisma.list.findMany({
+      where: { userId, isPublic: true },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    });
 
     let hoursWatched = 0;
     let sumRating = 0;
@@ -145,9 +132,8 @@ router.get('/:username', async (req, res, next) => {
         achievements,
       }
     });
-  } catch (err: any) {
-    console.error('❌ STATS_ROUTE_ERROR:', err?.message, err?.stack || err);
-    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: err?.message || 'An unexpected error occurred' } });
+  } catch (err) {
+    next(err);
   }
 });
 
