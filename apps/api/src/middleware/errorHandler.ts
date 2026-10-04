@@ -21,12 +21,14 @@ export function errorHandler(
   }
 
   // Known operational errors
-  if (err instanceof AppError) {
-    res.status(err.statusCode).json({
+  if (err instanceof AppError || (err as any).isOperational || typeof (err as any).statusCode === 'number') {
+    const statusCode = (err as any).statusCode || 500;
+    const code = (err as any).code || 'INTERNAL_ERROR';
+    res.status(statusCode).json({
       error: {
-        code: err.code,
+        code,
         message: err.message,
-        details: err.details,
+        details: (err as any).details,
       },
     });
     return;
