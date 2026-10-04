@@ -145,8 +145,9 @@ router.get('/:username', async (req, res, next) => {
         achievements,
       }
     });
-  } catch (err) {
-    next(err);
+  } catch (err: any) {
+    console.error('❌ STATS_ROUTE_ERROR:', err?.message, err?.stack || err);
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: err?.message || 'An unexpected error occurred' } });
   }
 });
 
