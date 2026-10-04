@@ -4,6 +4,15 @@ import { NotFoundError } from '../utils/errors';
 
 const router: Router = Router();
 
+function formatFilm(film: any) {
+  if (!film) return null;
+  return {
+    ...film,
+    budget: film.budget !== undefined && film.budget !== null ? film.budget.toString() : null,
+    revenue: film.revenue !== undefined && film.revenue !== null ? film.revenue.toString() : null,
+  };
+}
+
 // GET /api/v1/stats/:username
 router.get('/:username', async (req, res, next) => {
   try {
@@ -32,7 +41,10 @@ router.get('/:username', async (req, res, next) => {
       prisma.list.count({ where: { userId, isPublic: true } }),
       prisma.follow.count({ where: { followingId: userId } }),
       prisma.follow.count({ where: { followerId: userId } }),
-      prisma.filmLog.findMany({ where: { userId }, include: { film: { include: { genres: { include: { genre: true } } } } } }),
+      prisma.filmLog.findMany({
+        where: { userId },
+        include: { film: { include: { genres: { include: { genre: true } } } } }
+      }),
       prisma.userAchievement.findMany({ where: { userId, unlockedAt: { not: null } } }),
       prisma.filmLog.findMany({
         where: { userId, rating: { not: null } },
@@ -62,28 +74,49 @@ router.get('/:username', async (req, res, next) => {
     for (let i = 0.5; i <= 5.0; i += 0.5) ratings[i.toFixed(1)] = 0;
 
     filmLogs.forEach((log: any) => {
-      const runtime = log.film.runtime || 120;
-      hoursWatched += (runtime / 60);
+      if (log.film) {
+        const runtime = log.film.runtime || 120;
+        hoursWatched += (runtime / 60);
 
-      if (log.rating) {
-        sumRating += log.rating.toNumber();
-        ratingCount++;
-        ratings[log.rating.toFixed(1)] = (ratings[log.rating.toFixed(1)] || 0) + 1;
+        const year = log.film.releaseDate ? new Date(log.film.releaseDate).getFullYear().toString() : 'Unknown';
+        filmsByYear[year] = (filmsByYear[year] || 0) + 1;
+
+        if (log.film.genres) {
+          log.film.genres.forEach((g: any) => {
+            const genreName = g.genre?.name;
+            if (genreName) {
+              genreCounts[genreName] = (genreCounts[genreName] || 0) + 1;
+            }
+          });
+        }
       }
-      
-      const year = log.film.releaseDate ? new Date(log.film.releaseDate).getFullYear().toString() : 'Unknown';
-      filmsByYear[year] = (filmsByYear[year] || 0) + 1;
-      
-      if (log.film.genres) {
-        log.film.genres.forEach((g: any) => {
-          const genreName = g.genre.name;
-          genreCounts[genreName] = (genreCounts[genreName] || 0) + 1;
-        });
+
+      if (log.rating !== null && log.rating !== undefined) {
+        const numRating = typeof log.rating?.toNumber === 'function' ? log.rating.toNumber() : Number(log.rating);
+        if (!isNaN(numRating)) {
+          sumRating += numRating;
+          ratingCount++;
+          const ratingKey = numRating.toFixed(1);
+          if (ratings[ratingKey] !== undefined) {
+            ratings[ratingKey] = (ratings[ratingKey] || 0) + 1;
+          }
+        }
       }
     });
 
     const avgRatingGiven = ratingCount > 0 ? (sumRating / ratingCount) : 0;
     const favoriteGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(g => g[0]);
+
+    const formattedRecentRatings = recentRatings.map((log: any) => ({
+      ...log,
+      rating: log.rating !== null && log.rating !== undefined ? (typeof log.rating?.toNumber === 'function' ? log.rating.toNumber() : Number(log.rating)) : null,
+      film: formatFilm(log.film),
+    }));
+
+    const formattedRecentReviews = recentReviews.map((rev: any) => ({
+      ...rev,
+      film: formatFilm(rev.film),
+    }));
 
     res.json({
       data: {
@@ -106,8 +139,8 @@ router.get('/:username', async (req, res, next) => {
         ratings,
         filmsByYear,
         favoriteGenres,
-        recentRatings,
-        recentReviews,
+        recentRatings: formattedRecentRatings,
+        recentReviews: formattedRecentReviews,
         collections,
         achievements,
       }
