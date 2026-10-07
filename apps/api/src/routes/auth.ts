@@ -11,6 +11,16 @@ import { authRateLimiter } from '../middleware/rateLimiter';
 
 const router: Router = Router();
 
+const isProd = config.nodeEnv === 'production';
+
+// Cross-site cookie options: Vercel frontend + Render API are different origins,
+// so production must use sameSite: 'none' + secure: true.
+const COOKIE_BASE = {
+  httpOnly: true,
+  secure: isProd,
+  sameSite: isProd ? 'none' as const : 'lax' as const,
+};
+
 // Schemas
 const registerSchema = z.object({
   username: z.string().min(3).max(30).regex(/^[a-zA-Z0-9_]+$/),
@@ -90,16 +100,12 @@ router.post('/register', async (req, res, next) => {
     const refreshToken = await generateRefreshToken(user.id);
 
     res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: config.nodeEnv === 'production',
-      sameSite: 'strict',
+      ...COOKIE_BASE,
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
     
     res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: config.nodeEnv === 'production',
-      sameSite: 'strict',
+      ...COOKIE_BASE,
       maxAge: 15 * 60 * 1000,
     });
 
@@ -147,16 +153,12 @@ router.post('/login', async (req, res, next) => {
     const refreshToken = await generateRefreshToken(safeUser.id);
 
     res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: config.nodeEnv === 'production',
-      sameSite: 'strict',
+      ...COOKIE_BASE,
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: config.nodeEnv === 'production',
-      sameSite: 'strict',
+      ...COOKIE_BASE,
       maxAge: 15 * 60 * 1000,
     });
 
@@ -203,16 +205,12 @@ router.post('/refresh', async (req, res, next) => {
     const accessToken = generateAccessToken({ ...user, role: user.role });
 
     res.cookie('refresh_token', newRefreshToken, {
-      httpOnly: true,
-      secure: config.nodeEnv === 'production',
-      sameSite: 'strict',
+      ...COOKIE_BASE,
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: config.nodeEnv === 'production',
-      sameSite: 'strict',
+      ...COOKIE_BASE,
       maxAge: 15 * 60 * 1000,
     });
 
