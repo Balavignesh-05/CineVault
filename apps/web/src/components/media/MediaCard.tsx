@@ -29,12 +29,24 @@ export function MediaCard({
   const [isLiked, setIsLiked] = useState(false);
   const [hasImageError, setHasImageError] = useState(false);
 
-  const isTv = 'seasons' in media || media.mediaType === 'tv';
+  const rawMedia = media as any;
+  const isTv = 'seasons' in media || media.mediaType === 'tv' || rawMedia.first_air_date || rawMedia.name;
   const mediaType = isTv ? 'tv' : 'movie';
   const linkHref = isTv ? `/series/${media.id}` : `/movies/${media.id}`;
   
-  const posterUrl = media.posterPath && !hasImageError
-    ? (media.posterPath.startsWith('http') ? media.posterPath : `https://image.tmdb.org/t/p/w500${media.posterPath}`)
+  const posterPath = media.posterPath || rawMedia.poster_path || null;
+  const title = media.title || rawMedia.title || rawMedia.name || 'Untitled';
+  const voteAverage = media.voteAverage ?? rawMedia.vote_average ?? 0;
+  const releaseYear = media.releaseYear ?? (
+    rawMedia.release_date
+      ? new Date(rawMedia.release_date).getFullYear()
+      : rawMedia.first_air_date
+      ? new Date(rawMedia.first_air_date).getFullYear()
+      : null
+  );
+
+  const posterUrl = posterPath && !hasImageError
+    ? (posterPath.startsWith('http') ? posterPath : `https://image.tmdb.org/t/p/w500${posterPath}`)
     : null;
 
   return (
@@ -57,17 +69,17 @@ export function MediaCard({
         )}
 
         {/* Rating Badge */}
-        {media.voteAverage > 0 && (
+        {voteAverage > 0 && (
           <div className="absolute top-2 right-2 z-20 px-1.5 py-0.5 rounded-md bg-black/80 backdrop-blur-md flex items-center gap-1">
             <Star size={10} className="text-primary fill-primary" />
-            <span className="text-[10px] font-bold text-white">{media.voteAverage.toFixed(1)}</span>
+            <span className="text-[10px] font-bold text-white">{voteAverage.toFixed(1)}</span>
           </div>
         )}
 
         {posterUrl ? (
           <Image
             src={posterUrl}
-            alt={media.title}
+            alt={title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -78,7 +90,7 @@ export function MediaCard({
         ) : (
           <div className="flex flex-col items-center justify-center h-full w-full text-white/20 p-4 text-center">
             {isTv ? <Tv size={24} className="mb-2" /> : <Film size={24} className="mb-2" />}
-            <span className="text-xs font-semibold text-white/40">{media.title}</span>
+            <span className="text-xs font-semibold text-white/40">{title}</span>
           </div>
         )}
 
@@ -128,12 +140,12 @@ export function MediaCard({
         <Link
           href={linkHref}
           className="font-bold text-sm text-text-primary line-clamp-1 group-hover:text-primary transition-colors"
-          title={media.title}
+          title={title}
         >
-          {media.title}
+          {title}
         </Link>
         <span className="text-xs font-medium text-text-muted mt-0.5 uppercase tracking-wider">
-          {media.releaseYear || 'TBA'} {isTv && ' • TV'}
+          {releaseYear || 'TBA'} {isTv && ' • TV'}
         </span>
       </div>
     </motion.div>

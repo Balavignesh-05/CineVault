@@ -4,7 +4,7 @@ import { Search, Compass, SlidersHorizontal, Star } from 'lucide-react';
 import { getTrending, getPopular, normalizeMovieCard } from '@/lib/tmdb/client';
 import { MediaCard } from '@/components/media/MediaCard';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 const GENRES = [
   { name: 'Action', slug: 'action' },
@@ -56,12 +56,12 @@ export default async function DiscoveryPage() {
     getPopular(1).catch(() => ({ results: [] })),
   ]);
 
-  const trendingMovies = trendingData.results?.slice(0, 12).map(normalizeMovieCard) || [];
-  const popularMovies = popularData.results?.slice(0, 18).map(normalizeMovieCard) || [];
+  const trendingMovies = trendingData.results?.slice(0, 14).map(normalizeMovieCard) || [];
+  const popularMovies = popularData.results?.slice(0, 21).map(normalizeMovieCard) || [];
 
   return (
     <div className="min-h-screen bg-background text-text-secondary pb-16">
-      <div className="container mx-auto px-4 py-6 max-w-7xl space-y-8">
+      <div className="container mx-auto px-4 py-6 max-w-[1600px] space-y-8">
         
         {/* Header & Quick Search */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-subtle pb-6">
@@ -162,8 +162,8 @@ export default async function DiscoveryPage() {
                 See all →
               </Link>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-              {trendingMovies.slice(0, 6).map((m: any) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 md:gap-4">
+              {trendingMovies.slice(0, 7).map((m: any) => (
                 <MediaCard key={m.id} media={m} />
               ))}
             </div>
@@ -177,7 +177,7 @@ export default async function DiscoveryPage() {
             <span className="text-xs text-text-muted">{popularMovies.length} titles</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 md:gap-4">
             {popularMovies.map((m: any) => (
               <MediaCard key={m.id} media={m} />
             ))}

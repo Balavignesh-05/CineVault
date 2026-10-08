@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MediaCard } from '@/components/media/MediaCard';
+import { normalizeMovieCard } from '@/lib/tmdb/client';
 import { Film } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -32,9 +33,11 @@ export default function FilmsPage() {
     },
   });
 
+  const movies = data?.results?.map((m: any) => normalizeMovieCard(m)) || [];
+
   return (
     <div className="min-h-screen bg-background text-text-secondary py-6 md:py-8 pb-24">
-      <div className="container mx-auto px-4 space-y-6">
+      <div className="container mx-auto px-4 max-w-[1600px] space-y-6">
         <div className="flex items-center gap-3 border-b border-border-subtle pb-4">
           <Film className="w-6 h-6 text-text-muted" />
           <h1 className="text-xl font-bold text-white uppercase tracking-wider">Browse Films</h1>
@@ -114,16 +117,16 @@ export default function FilmsPage() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {Array.from({ length: 10 }).map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 md:gap-5">
+            {Array.from({ length: 14 }).map((_, i) => (
               <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
             ))}
           </div>
-        ) : data?.results?.length === 0 ? (
+        ) : movies.length === 0 ? (
           <div className="text-center py-20 text-text-muted">No films found.</div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {data?.results?.map((movie: any) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 md:gap-5">
+            {movies.map((movie: any) => (
               <MediaCard key={movie.id} media={movie} />
             ))}
           </div>
