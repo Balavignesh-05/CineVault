@@ -1,14 +1,16 @@
 import React, { Suspense } from 'react';
 import { getTrending, getMovieDetails } from '@/lib/tmdb/client';
 import { HeroSection } from '@/components/home/HeroSection';
+import { CategoryTabs } from '@/components/home/CategoryTabs';
+import { PeopleRail } from '@/components/home/PeopleRail';
 import { 
-  TrendingTodayRow,
-  PopularThisWeekRow,
+  TrendingNowRow,
+  PopularMoviesRow,
+  PopularTvShowsRow,
+  AiRecommendationsRow,
+  TopRatedMoviesRow,
   NowPlayingRow,
   UpcomingMoviesRow,
-  TopRatedMoviesRow,
-  TopRatedTvRow,
-  RecommendedRow,
   RowSkeleton 
 } from '@/components/home/HomeRows';
 
@@ -28,38 +30,55 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="min-h-screen bg-background text-text-secondary pb-12">
+    <div className="min-h-screen bg-background text-text-secondary pb-16">
+      {/* Spotlight Hero Section */}
       <HeroSection movies={heroMovies} />
       
-      <div className="container mx-auto px-4 py-4 md:py-6 space-y-4 md:space-y-6">
+      {/* Category Navigation Bar */}
+      <CategoryTabs activeTab="For You" />
+
+      {/* Main Content Rails */}
+      <div className="w-full pt-2 sm:pt-4 pb-12 space-y-6 md:space-y-8">
         <HomeFeed />
         
+        {/* Trending Now Rail */}
         <Suspense fallback={<RowSkeleton />}>
-          <TrendingTodayRow />
+          <TrendingNowRow />
         </Suspense>
         
+        {/* Popular Movies Rail */}
         <Suspense fallback={<RowSkeleton />}>
-          <PopularThisWeekRow />
+          <PopularMoviesRow />
         </Suspense>
 
+        {/* Popular TV Shows Rail */}
+        <Suspense fallback={<RowSkeleton />}>
+          <PopularTvShowsRow />
+        </Suspense>
+
+        {/* Popular People Circular Rail */}
+        <Suspense fallback={<RowSkeleton />}>
+          <PeopleRail />
+        </Suspense>
+
+        {/* AI Recommendations Rail */}
+        <Suspense fallback={<RowSkeleton />}>
+          <AiRecommendationsRow />
+        </Suspense>
+
+        {/* Now Playing Rail */}
         <Suspense fallback={<RowSkeleton />}>
           <NowPlayingRow />
         </Suspense>
 
-        <Suspense fallback={<RowSkeleton />}>
-          <UpcomingMoviesRow />
-        </Suspense>
-
-        <Suspense fallback={<RowSkeleton />}>
-          <TopRatedTvRow />
-        </Suspense>
-
-        <Suspense fallback={<RowSkeleton />}>
-          <RecommendedRow />
-        </Suspense>
-
+        {/* Top Rated Rail */}
         <Suspense fallback={<RowSkeleton />}>
           <TopRatedMoviesRow />
+        </Suspense>
+
+        {/* Upcoming Movies Rail */}
+        <Suspense fallback={<RowSkeleton />}>
+          <UpcomingMoviesRow />
         </Suspense>
       </div>
     </div>

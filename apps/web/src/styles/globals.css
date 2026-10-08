@@ -26,37 +26,37 @@
   --font-display: 'Inter', sans-serif;
   --font-sans: 'Inter', sans-serif;
 
-  /* Background Hierarchy */
-  --color-bg-base: #14181c;
-  --color-bg-surface: #2c3440;
-  --color-bg-elevated: #456;
-  --color-bg-overlay: rgba(20, 24, 28, 0.9);
-  --color-bg-hover: #363c47;
+  /* Background Hierarchy - Deep Near-Black & Charcoal */
+  --color-bg-base: #0b0e14;
+  --color-bg-surface: #12161f;
+  --color-bg-elevated: #1a202c;
+  --color-bg-overlay: rgba(11, 14, 20, 0.88);
+  --color-bg-hover: #222936;
 
   /* Borders */
-  --color-border-subtle: rgba(255, 255, 255, 0.07);
-  --color-border-default: rgba(255, 255, 255, 0.12);
-  --color-border-strong: rgba(255, 255, 255, 0.2);
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-default: rgba(255, 255, 255, 0.14);
+  --color-border-strong: rgba(255, 255, 255, 0.22);
 
-  /* Primary Brand Accent (Letterboxd Green = watched) */
+  /* Primary Brand Accent (CineVault Green) */
   --color-accent-primary: #00e054;
   --color-accent-primary-hover: #00c745;
   --color-accent-primary-muted: rgba(0, 224, 84, 0.15);
 
-  /* Blue accent (Letterboxd blue = watchlist) */
+  /* Blue accent (Watchlist / Info) */
   --color-accent-tertiary: #40bcf4;
   --color-accent-tertiary-hover: #20acf0;
   --color-accent-tertiary-muted: rgba(64, 188, 244, 0.15);
 
-  /* Orange accent (star ratings) */
+  /* Orange/Amber accent (Ratings) */
   --color-accent-amber: #ff8000;
 
   /* Typography Colors */
-  --color-text-primary: #fff;
-  --color-text-secondary: #9ab;
-  --color-text-muted: #678;
-  --color-text-disabled: #456;
-  --color-text-inverse: #14181c;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #9aa4b2;
+  --color-text-muted: #64748b;
+  --color-text-disabled: #475569;
+  --color-text-inverse: #0b0e14;
 
   /* Status Colors */
   --color-success: #00e054;
@@ -66,8 +66,8 @@
 
   /* Gradients */
   --gradient-accent: linear-gradient(135deg, #00e054 0%, #40bcf4 100%);
-  --gradient-hero: linear-gradient(180deg, rgba(20, 24, 28, 0) 0%, rgba(20, 24, 28, 0.85) 60%, #14181c 100%);
-  --gradient-card: linear-gradient(180deg, rgba(44, 52, 64, 0) 0%, rgba(44, 52, 64, 0.95) 100%);
+  --gradient-hero: linear-gradient(180deg, rgba(11, 14, 20, 0) 0%, rgba(11, 14, 20, 0.85) 60%, #0b0e14 100%);
+  --gradient-card: linear-gradient(180deg, rgba(18, 22, 31, 0) 0%, rgba(18, 22, 31, 0.95) 100%);
 
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -114,24 +114,33 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Custom Utilities ──────────────────────────────────────── */
 
 .glass-panel {
-  background: rgba(20, 23, 27, 0.6);
+  background: rgba(18, 22, 31, 0.75);
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
   border: 1px solid var(--color-border-subtle);
 }
 
+.glass-card {
+  background: rgba(18, 22, 31, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
 .glass-header {
-  background: rgba(11, 13, 15, 0.85);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  background: rgba(11, 14, 20, 0.85);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
   border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .hover-lift {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
 }
 .hover-lift:hover {
   transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
 
 /* Custom Scrollbar */

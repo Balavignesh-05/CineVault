@@ -568,6 +568,10 @@ export function normalizeSeriesDetails(series: TMDBTvDetails): SeriesDetailsData
 
 // ── Person ────────────────────────────────────────────────────
 
+export async function getPopularPeople(page = 1): Promise<TMDBPaginatedResult<TMDBPerson>> {
+  return tmdbFetch<TMDBPaginatedResult<TMDBPerson>>('/person/popular', { page });
+}
+
 export async function getPersonDetails(
   personId: number,
 ): Promise<TMDBPerson> {

@@ -189,31 +189,43 @@ export function AppHeader() {
           <Link
             href="/"
             className={`${styles.navLink} ${pathname === '/' ? styles.navLinkActive : ''}`}
+            aria-current={pathname === '/' ? 'page' : undefined}
           >
             Home
           </Link>
           <Link
-            href="/discovery"
-            className={`${styles.navLink} ${pathname?.startsWith('/discovery') ? styles.navLinkActive : ''}`}
-          >
-            Discover
-          </Link>
-          <Link
             href="/films"
             className={`${styles.navLink} ${pathname?.startsWith('/films') ? styles.navLinkActive : ''}`}
+            aria-current={pathname?.startsWith('/films') ? 'page' : undefined}
           >
             Movies
           </Link>
           <Link
             href="/series"
             className={`${styles.navLink} ${pathname?.startsWith('/series') ? styles.navLinkActive : ''}`}
+            aria-current={pathname?.startsWith('/series') ? 'page' : undefined}
           >
             TV Shows
+          </Link>
+          <Link
+            href="/discovery"
+            className={`${styles.navLink} ${pathname?.startsWith('/discovery') ? styles.navLinkActive : ''}`}
+            aria-current={pathname?.startsWith('/discovery') ? 'page' : undefined}
+          >
+            Discover
+          </Link>
+          <Link
+            href="/person"
+            className={`${styles.navLink} ${pathname?.startsWith('/person') ? styles.navLinkActive : ''}`}
+            aria-current={pathname?.startsWith('/person') ? 'page' : undefined}
+          >
+            People
           </Link>
 
           <button
             onClick={() => setRouletteOpen(true)}
             className={`${styles.navLink} text-accent-amber hover:text-[#ff9933] flex items-center gap-1 font-bold`}
+            aria-label="Open Movie Roulette"
           >
             <Dices size={16} /> Roulette
           </button>
@@ -222,12 +234,14 @@ export function AppHeader() {
               <Link
                 href="/feed"
                 className={`${styles.navLink} ${pathname?.startsWith('/feed') ? styles.navLinkActive : ''}`}
+                aria-current={pathname?.startsWith('/feed') ? 'page' : undefined}
               >
                 Feed
               </Link>
               <Link
                 href="/dashboard"
                 className={`${styles.navLink} ${pathname === '/dashboard' ? styles.navLinkActive : ''}`}
+                aria-current={pathname === '/dashboard' ? 'page' : undefined}
               >
                 Dashboard
               </Link>
@@ -327,7 +341,9 @@ export function AppHeader() {
           >
             <nav className="flex flex-col py-2">
               <Link href="/discovery" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Discover</Link>
-              <Link href="/films" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Films</Link>
+              <Link href="/films" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Movies</Link>
+              <Link href="/series" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">TV Shows</Link>
+              <Link href="/person" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">People</Link>
               <Link href="/lists" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Lists</Link>
 
               <Link href="/recommendations" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Recommendations</Link>

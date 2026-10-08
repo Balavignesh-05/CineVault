@@ -81,7 +81,7 @@ export default async function SeriesDetailPage({ params }: Props) {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
       </div>
 
-      <div className="container mx-auto px-4 md:px-8 -mt-40 relative z-10 space-y-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1600px] -mt-40 relative z-10 space-y-12">
         {/* Main Header Info */}
         <div className="flex flex-col md:flex-row gap-8 items-start">
           {/* Poster */}

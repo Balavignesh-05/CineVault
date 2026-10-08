@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "test:e2e": "playwright test",
     "clean": "rimraf .next"
   },
   "dependencies": {
@@ -51,6 +52,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.6",
+    "@playwright/test": "^1.64.0",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.12.12",
     "@types/react": "^19.0.0",

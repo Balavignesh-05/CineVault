@@ -26,7 +26,7 @@ export function MediaSection({
       "py-4 md:py-6 w-full",
       variant === 'dark' ? "bg-black/20" : ""
     )}>
-      <div className="container space-y-4">
+      <div className="container space-y-4 max-w-[1600px] px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-0.5">
             <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white">

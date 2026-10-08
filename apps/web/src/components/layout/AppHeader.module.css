@@ -1,23 +1,23 @@
 .header {
   position: sticky;
   top: 0;
-  z-index: var(--z-sticky);
+  z-index: var(--z-sticky, 200);
   height: 64px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(11, 14, 20, 0.85);
   backdrop-filter: blur(24px) saturate(1.2);
   -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all var(--transition-base);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  transition: all var(--transition-base, 0.25s);
 }
 
 .inner {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: 1.25rem;
   height: 100%;
-  max-width: var(--max-width);
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 0 var(--space-6);
+  padding: 0 1.5rem;
 }
 
 /* ── Logo ──────────────────────────────────────────────── */
@@ -110,22 +110,26 @@
 .navLink {
   padding: 6px 14px;
   border-radius: var(--radius-full);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--color-text-secondary);
   text-decoration: none;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  border: 1px solid transparent;
 }
 
 .navLink:hover {
-  color: var(--color-text-primary);
-  background: var(--color-bg-elevated);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .navLinkActive {
-  color: var(--color-text-primary);
-  background: var(--color-bg-elevated);
+  color: #00e054;
+  background: rgba(0, 224, 84, 0.1);
+  border-color: rgba(0, 224, 84, 0.25);
+  box-shadow: 0 0 12px rgba(0, 224, 84, 0.15);
 }
 
 /* ── Actions ───────────────────────────────────────────── */

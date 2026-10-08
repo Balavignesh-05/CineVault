@@ -30,6 +30,8 @@ cookies.txt
 errors.txt
 error_log.txt
 test-results/
+screenshots/
+e2e-report.json
 scratch/
 test-*.js
 test-*.ps1

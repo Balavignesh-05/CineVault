@@ -7,27 +7,75 @@ import {
   getUpcoming,
   getNowPlaying,
   getTvTopRated,
+  getTrendingTv,
   discoverMovies,
   normalizeMovieCard,
   normalizeSeriesCard
 } from '@/lib/tmdb/client';
 
-export async function TrendingTodayRow() {
+export async function TrendingNowRow() {
   const res = await getTrending('day').catch(() => ({ results: [] }));
   const movies = res.results?.map(normalizeMovieCard) || [];
-  return <MediaSection title="Trending Today" media={movies} />;
+  return (
+    <MediaSection 
+      title="Trending Now" 
+      subtitle="What audiences are streaming and logging today" 
+      media={movies} 
+      viewAllHref="/films" 
+    />
+  );
+}
+
+export async function TrendingTodayRow() {
+  return <TrendingNowRow />;
+}
+
+export async function PopularMoviesRow() {
+  const res = await getPopular().catch(() => ({ results: [] }));
+  const movies = res.results?.map(normalizeMovieCard) || [];
+  return (
+    <MediaSection 
+      title="Popular Movies" 
+      subtitle="Top box office favorites and community rated picks" 
+      media={movies} 
+      viewAllHref="/films" 
+    />
+  );
 }
 
 export async function PopularThisWeekRow() {
-  const res = await getPopular().catch(() => ({ results: [] }));
+  return <PopularMoviesRow />;
+}
+
+export async function PopularTvShowsRow() {
+  const res = await getTrendingTv('week').catch(() => ({ results: [] }));
+  const series = res.results?.map(normalizeSeriesCard) || [];
+  return (
+    <MediaSection 
+      title="Popular TV Shows" 
+      subtitle="Binge-worthy drama, comedy, and critically acclaimed series" 
+      media={series} 
+      viewAllHref="/series" 
+    />
+  );
+}
+
+export async function AiRecommendationsRow() {
+  const res = await discoverMovies({ sort_by: 'popularity.desc', with_genres: '28,878,53' }).catch(() => ({ results: [] }));
   const movies = res.results?.map(normalizeMovieCard) || [];
-  return <MediaSection title="Popular This Week" media={movies} viewAllHref="/films" />;
+  return (
+    <MediaSection 
+      title="AI Recommendations" 
+      subtitle="Smart recommendations tuned to cinematic trends" 
+      media={movies} 
+      viewAllHref="/recommendations"
+      variant="dark" 
+    />
+  );
 }
 
 export async function RecommendedRow() {
-  const res = await discoverMovies({ sort_by: 'popularity.desc', with_genres: '28,878' }).catch(() => ({ results: [] }));
-  const movies = res.results?.map(normalizeMovieCard) || [];
-  return <MediaSection title="Recommended For You" media={movies} variant="dark" />;
+  return <AiRecommendationsRow />;
 }
 
 export async function ContinueWatchingRow() {

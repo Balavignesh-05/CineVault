@@ -45,21 +45,43 @@ export default function SignUpPage() {
       {error && (
         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">{error}</div>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="signup-displayname">Display Name</Label>
-          <Input id="signup-displayname" value={form.displayName} onChange={update('displayName')} placeholder="Your Name" required />
+      <form onSubmit={handleSubmit} className="space-y-3.5">
+        <div className="space-y-1.5">
+          <Label htmlFor="signup-displayname" className="text-xs font-semibold text-text-secondary">Display Name</Label>
+          <Input 
+            id="signup-displayname" 
+            value={form.displayName} 
+            onChange={update('displayName')} 
+            placeholder="Your Name" 
+            required 
+            className="bg-[#0b0e14]/80 border-white/10 text-white placeholder:text-text-muted focus-visible:ring-primary h-11 rounded-xl"
+          />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="signup-username">Username</Label>
-          <Input id="signup-username" value={form.username} onChange={update('username')} placeholder="yourhandle" required />
+        <div className="space-y-1.5">
+          <Label htmlFor="signup-username" className="text-xs font-semibold text-text-secondary">Username</Label>
+          <Input 
+            id="signup-username" 
+            value={form.username} 
+            onChange={update('username')} 
+            placeholder="yourhandle" 
+            required 
+            className="bg-[#0b0e14]/80 border-white/10 text-white placeholder:text-text-muted focus-visible:ring-primary h-11 rounded-xl"
+          />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="signup-email">Email</Label>
-          <Input id="signup-email" type="email" value={form.email} onChange={update('email')} placeholder="you@example.com" required />
+        <div className="space-y-1.5">
+          <Label htmlFor="signup-email" className="text-xs font-semibold text-text-secondary">Email</Label>
+          <Input 
+            id="signup-email" 
+            type="email" 
+            value={form.email} 
+            onChange={update('email')} 
+            placeholder="you@example.com" 
+            required 
+            className="bg-[#0b0e14]/80 border-white/10 text-white placeholder:text-text-muted focus-visible:ring-primary h-11 rounded-xl"
+          />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="signup-password">Password</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="signup-password" className="text-xs font-semibold text-text-secondary">Password</Label>
           <div className="relative">
             <Input
               id="signup-password"
@@ -68,14 +90,23 @@ export default function SignUpPage() {
               onChange={update('password')}
               placeholder="••••••••"
               required
-              className="pr-10"
+              className="bg-[#0b0e14]/80 border-white/10 text-white placeholder:text-text-muted focus-visible:ring-primary h-11 rounded-xl pr-10"
             />
-            <button type="button" onClick={() => setShowPw(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white">
+            <button 
+              type="button" 
+              onClick={() => setShowPw(p => !p)} 
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white p-1 rounded-md transition-colors"
+              aria-label={showPw ? "Hide password" : "Show password"}
+            >
               {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
         </div>
-        <Button type="submit" className="w-full bg-primary text-black font-bold hover:bg-primary/90" disabled={isLoading}>
+        <Button 
+          type="submit" 
+          className="w-full bg-primary text-black font-bold hover:bg-primary-hover transition-all h-11 rounded-xl shadow-[0_0_20px_rgba(0,224,84,0.25)]" 
+          disabled={isLoading}
+        >
           {isLoading ? <Loader2 size={16} className="animate-spin mr-2" /> : null}
           Create Account
         </Button>

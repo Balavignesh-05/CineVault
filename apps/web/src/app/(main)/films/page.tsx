@@ -5,6 +5,7 @@ import { MediaCard } from '@/components/media/MediaCard';
 import { normalizeMovieCard } from '@/lib/tmdb/client';
 import { Film } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 
 export default function FilmsPage() {
   const [industry, setIndustry] = useState('All');
@@ -123,7 +124,30 @@ export default function FilmsPage() {
             ))}
           </div>
         ) : movies.length === 0 ? (
-          <div className="text-center py-20 text-text-muted">No films found.</div>
+          <div className="py-20 flex flex-col items-center justify-center text-center p-8 rounded-2xl bg-surface/50 border border-white/[0.06]">
+            <div className="w-14 h-14 rounded-full bg-surface border border-white/10 flex items-center justify-center text-text-muted mb-4 shadow-inner">
+              <Film size={26} className="opacity-60" />
+            </div>
+            <h3 className="text-lg font-bold text-white mb-1.5">No films found</h3>
+            <p className="text-xs text-text-muted max-w-sm mb-6 leading-relaxed">
+              No movies match your current filter selections. Try clearing your filters or selecting a different genre or release year.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setYear('');
+                setDecade('');
+                setGenre('');
+                setRating('');
+                setIndustry('All');
+                setHideWatched(false);
+                setHideWatchlist(false);
+              }}
+              className="rounded-full px-5 text-xs font-bold border-white/20 hover:border-primary hover:text-primary transition-all"
+            >
+              Clear All Filters
+            </Button>
+          </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 md:gap-5">
             {movies.map((movie: any) => (

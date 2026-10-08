@@ -44,8 +44,8 @@ export default function SignInPage() {
         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">{error}</div>
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="signin-email">Email</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="signin-email" className="text-xs font-semibold text-text-secondary">Email</Label>
           <Input
             id="signin-email"
             type="email"
@@ -53,10 +53,11 @@ export default function SignInPage() {
             onChange={e => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
+            className="bg-[#0b0e14]/80 border-white/10 text-white placeholder:text-text-muted focus-visible:ring-primary h-11 rounded-xl"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="signin-password">Password</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="signin-password" className="text-xs font-semibold text-text-secondary">Password</Label>
           <div className="relative">
             <Input
               id="signin-password"
@@ -65,12 +66,13 @@ export default function SignInPage() {
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="pr-10"
+              className="bg-[#0b0e14]/80 border-white/10 text-white placeholder:text-text-muted focus-visible:ring-primary h-11 rounded-xl pr-10"
             />
             <button
               type="button"
               onClick={() => setShowPw(p => !p)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white p-1 rounded-md transition-colors"
+              aria-label={showPw ? "Hide password" : "Show password"}
             >
               {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -78,7 +80,7 @@ export default function SignInPage() {
         </div>
         <Button
           type="submit"
-          className="w-full bg-primary text-black font-bold hover:bg-primary/90"
+          className="w-full bg-primary text-black font-bold hover:bg-primary-hover transition-all h-11 rounded-xl shadow-[0_0_20px_rgba(0,224,84,0.25)]"
           disabled={isLoading}
         >
           {isLoading ? <Loader2 size={16} className="animate-spin mr-2" /> : <LogIn size={16} className="mr-2" />}
