@@ -45,7 +45,7 @@ export function Navbar() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search movies, TV shows, people..."
+            placeholder="Search films, people, members…"
             className="block w-full p-2.5 pl-10 text-sm text-text-primary bg-surface border border-border-subtle rounded-full focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-muted transition-all outline-none"
           />
         </form>

@@ -26,22 +26,22 @@
   --font-display: 'Inter', sans-serif;
   --font-sans: 'Inter', sans-serif;
 
-  /* Background Hierarchy - Deep Near-Black & Charcoal */
-  --color-bg-base: #0b0e14;
-  --color-bg-surface: #12161f;
-  --color-bg-elevated: #1a202c;
-  --color-bg-overlay: rgba(11, 14, 20, 0.88);
-  --color-bg-hover: #222936;
+  /* Background Hierarchy - Midnight Jade */
+  --color-bg-base: #0B0F14;
+  --color-bg-surface: #131A22;
+  --color-bg-elevated: #1A2430;
+  --color-bg-overlay: rgba(11, 15, 20, 0.92);
+  --color-bg-hover: #222E3D;
 
   /* Borders */
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
-  --color-border-default: rgba(255, 255, 255, 0.14);
-  --color-border-strong: rgba(255, 255, 255, 0.22);
+  --color-border-subtle: #1C2633;
+  --color-border-default: #273442;
+  --color-border-strong: #3B4D61;
 
-  /* Primary Brand Accent (CineVault Green) */
-  --color-accent-primary: #00e054;
-  --color-accent-primary-hover: #00c745;
-  --color-accent-primary-muted: rgba(0, 224, 84, 0.15);
+  /* Primary Brand Accent (Midnight Jade) */
+  --color-accent-primary: #35D6A0;
+  --color-accent-primary-hover: #6BE8BC;
+  --color-accent-primary-muted: rgba(53, 214, 160, 0.15);
 
   /* Blue accent (Watchlist / Info) */
   --color-accent-tertiary: #40bcf4;
@@ -52,22 +52,24 @@
   --color-accent-amber: #ff8000;
 
   /* Typography Colors */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #9aa4b2;
-  --color-text-muted: #64748b;
+  --color-text-primary: #F4F3EC;
+  --color-text-secondary: #9AA8B7;
+  --color-text-muted: #6B7D90;
   --color-text-disabled: #475569;
-  --color-text-inverse: #0b0e14;
+  --color-text-inverse: #0B0F14;
 
   /* Status Colors */
-  --color-success: #00e054;
-  --color-error: #f44;
-  --color-warning: #ff8000;
+  --color-success: #35D6A0;
+  --color-success-muted: rgba(53, 214, 160, 0.15);
+  --color-error: #E05252;
+  --color-error-muted: rgba(224, 82, 82, 0.15);
+  --color-warning: #FF9F43;
   --color-info: #40bcf4;
 
   /* Gradients */
-  --gradient-accent: linear-gradient(135deg, #00e054 0%, #40bcf4 100%);
-  --gradient-hero: linear-gradient(180deg, rgba(11, 14, 20, 0) 0%, rgba(11, 14, 20, 0.85) 60%, #0b0e14 100%);
-  --gradient-card: linear-gradient(180deg, rgba(18, 22, 31, 0) 0%, rgba(18, 22, 31, 0.95) 100%);
+  --gradient-accent: linear-gradient(135deg, #35D6A0 0%, #40bcf4 100%);
+  --gradient-hero: linear-gradient(180deg, rgba(11, 15, 20, 0) 0%, rgba(11, 15, 20, 0.88) 60%, #0B0F14 100%);
+  --gradient-card: linear-gradient(180deg, rgba(19, 26, 34, 0) 0%, rgba(19, 26, 34, 0.95) 100%);
 
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -114,25 +116,25 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Custom Utilities ──────────────────────────────────────── */
 
 .glass-panel {
-  background: rgba(18, 22, 31, 0.75);
+  background: rgba(19, 26, 34, 0.85);
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid var(--color-border-default);
 }
 
 .glass-card {
-  background: rgba(18, 22, 31, 0.65);
+  background: rgba(19, 26, 34, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
 .glass-header {
-  background: rgba(11, 14, 20, 0.85);
+  background: rgba(11, 15, 20, 0.90);
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  border-bottom: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .hover-lift {

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { Search, Bell, Menu, X, Film, Star, LogOut, User, Settings, BookOpen, Dices, PlusCircle } from 'lucide-react';
+import { Search, Bell, Menu, X, Film, Star, LogOut, User, Settings, BookOpen, Dices, PlusCircle, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { useUIStore } from '../../store/ui';
@@ -34,7 +34,7 @@ function NotificationBell() {
       {unreadCount > 0 && (
         <span style={{
           position: 'absolute', top: '-4px', right: '-4px',
-          background: '#00e054', color: '#14181c',
+          background: 'var(--color-accent-primary, #35D6A0)', color: '#0B0F14',
           fontSize: '9px', fontWeight: 900,
           borderRadius: '999px', minWidth: '16px', height: '16px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -138,23 +138,45 @@ export function AppHeader() {
         </Link>
 
         {/* Search */}
-        {pathname !== '/search' ? (
-          <div className="relative flex-1" ref={suggestionsRef}>
-          <form className={`${styles.searchForm} ${searchFocused ? styles.searchFocused : ''}`} onSubmit={handleSearch}>
+        <div className="relative flex-1 max-w-md mx-2" ref={suggestionsRef}>
+          <form
+            role="search"
+            className={`${styles.searchForm} ${searchFocused ? styles.searchFocused : ''}`}
+            onSubmit={handleSearch}
+          >
             <Search className={styles.searchIcon} size={16} />
             <input
               ref={searchRef}
               type="search"
               className={styles.searchInput}
-              placeholder="Search movies, TV shows, people..."
+              placeholder="Search films, people, members…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => { setSearchFocused(true); if (searchQuery.trim().length >= 2) setShowSuggestions(true); }}
               onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
               onKeyDown={handleKeyDown}
-              aria-label="Search films"
+              aria-label="Search CineVault"
+              aria-autocomplete="list"
+              aria-expanded={showSuggestions}
+              aria-controls="search-suggestions"
               autoComplete="off"
             />
+            {isLoading && (
+              <Loader2 size={14} className="absolute right-9 text-[#35D6A0] animate-spin pointer-events-none" />
+            )}
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  searchRef.current?.focus();
+                }}
+                className="absolute right-3 p-1 rounded-full text-[#9AA8B7] hover:text-[#F4F3EC] hover:bg-[#1A2430] transition-colors"
+                aria-label="Clear search input"
+              >
+                <X size={14} />
+              </button>
+            )}
           </form>
 
           <SearchAutocomplete
@@ -171,9 +193,6 @@ export function AppHeader() {
             }}
           />
         </div>
-        ) : (
-          <div className="flex-1" />
-        )}
 
         {/* Mobile Menu Button */}
         <button
@@ -256,7 +275,7 @@ export function AppHeader() {
               {/* Quick Log Button */}
               <Link
                 href="/diary"
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#00e054] text-[#14181c] font-bold text-xs rounded-lg hover:bg-[#00c745] transition-colors"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-primary text-[#0B0F14] font-bold text-xs rounded-lg hover:bg-primary-hover transition-colors"
                 aria-label="Log a film"
               >
                 <PlusCircle size={14} /> Log Film

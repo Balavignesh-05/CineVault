@@ -118,9 +118,9 @@ export function HeroSection({ movies }: HeroSectionProps) {
           - Bottom-to-top gradient to blend naturally with page background
           - Top subtle vignette
           Artwork on the right and center stays clearly visible and cinematic! */}
-      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#0b0e14] via-[#0b0e14]/75 to-transparent sm:via-[#0b0e14]/50 max-w-4xl" />
-      <div className="absolute inset-x-0 bottom-0 h-48 z-10 pointer-events-none bg-gradient-to-t from-[#0b0e14] via-[#0b0e14]/60 to-transparent" />
-      <div className="absolute inset-x-0 top-0 h-20 z-10 pointer-events-none bg-gradient-to-b from-[#0b0e14]/40 to-transparent" />
+      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#0B0F14] via-[#0B0F14]/75 to-transparent sm:via-[#0B0F14]/50 max-w-4xl" />
+      <div className="absolute inset-x-0 bottom-0 h-48 z-10 pointer-events-none bg-gradient-to-t from-[#0B0F14] via-[#0B0F14]/60 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-20 z-10 pointer-events-none bg-gradient-to-b from-[#0B0F14]/40 to-transparent" />
 
       {/* Hero Content Container: placed in the lower-left of the hero */}
       <div className="container relative z-20 pb-10 sm:pb-12 md:pb-14 flex flex-col items-start justify-end h-full max-w-[1600px] px-4 sm:px-6 lg:px-8">
@@ -133,7 +133,7 @@ export function HeroSection({ movies }: HeroSectionProps) {
         >
           {/* Spotlight Pill & Genre Tag */}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/40 text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,224,84,0.25)]">
+            <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/40 text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-[0_0_15px_rgba(53,214,160,0.25)]">
               <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               In the Spotlight
             </span>
@@ -182,9 +182,9 @@ export function HeroSection({ movies }: HeroSectionProps) {
 
           {/* Dual CTAs */}
           <motion.div className="flex flex-wrap items-center gap-3 pt-2">
-            <Button size="lg" className="rounded-full px-7 bg-primary text-black hover:bg-primary-hover hover:scale-105 transition-all font-bold gap-2 shadow-[0_0_25px_rgba(0,224,84,0.35)] h-11" asChild>
+            <Button size="lg" className="rounded-full px-7 bg-primary text-[#0B0F14] hover:bg-primary-hover hover:scale-105 transition-all font-bold gap-2 shadow-[0_0_25px_rgba(53,214,160,0.3)] h-11" asChild>
               <Link href={`/movies/${activeMovie.id}`}>
-                <Play size={15} className="fill-black" />
+                <Play size={15} className="fill-[#0B0F14]" />
                 View Movie
               </Link>
             </Button>
@@ -212,7 +212,7 @@ export function HeroSection({ movies }: HeroSectionProps) {
                 className={cn(
                   "h-1.5 rounded-full transition-all duration-500 ease-out",
                   idx === currentIndex 
-                    ? "w-8 bg-primary shadow-[0_0_10px_rgba(0,224,84,0.6)]" 
+                    ? "w-8 bg-primary shadow-[0_0_10px_rgba(53,214,160,0.5)]"
                     : "w-2 bg-white/30 hover:bg-white/60"
                 )}
               />

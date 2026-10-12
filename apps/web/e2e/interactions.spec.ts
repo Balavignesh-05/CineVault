@@ -120,4 +120,64 @@ test.describe('Automated UI Interaction Testing', () => {
     await expect(page.locator('text=failed').or(page.locator('text=Invalid')).or(page.locator('.text-red-400'))).toBeVisible({ timeout: 10000 });
   });
 
+  test('Search Autocomplete Panel and Keyboard Dismissal', async ({ page }, testInfo) => {
+    const isMobile = testInfo.project.name === 'mobile-chromium';
+    if (isMobile) return;
+
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const searchInput = page.locator('input[type="search"]').first();
+    await expect(searchInput).toBeVisible();
+
+    // Type query to trigger autocomplete
+    await searchInput.fill('Inception');
+    const suggestionsPanel = page.locator('#search-suggestions');
+    await expect(suggestionsPanel).toBeVisible({ timeout: 10000 });
+
+    // Test Escape key dismissal
+    await page.keyboard.press('Escape');
+    await expect(suggestionsPanel).not.toBeVisible();
+  });
+
+  test('Search Page Category Navigation and Tab Switching', async ({ page }) => {
+    await page.goto('/search?q=Inception', { waitUntil: 'domcontentloaded' });
+
+    // Verify search heading
+    const heading = page.locator('h1').first();
+    await expect(heading).toContainText(/Inception/i);
+
+    // Verify and switch category tabs
+    const tvTab = page.getByRole('button', { name: /TV Shows/i });
+    if (await tvTab.isVisible()) {
+      await tvTab.click();
+      await expect(page).toHaveURL(/tab=tv/);
+    }
+
+    const peopleTab = page.getByRole('button', { name: /Cast & Crew/i });
+    if (await peopleTab.isVisible()) {
+      await peopleTab.click();
+      await expect(page).toHaveURL(/tab=people/);
+    }
+
+    const filmsTab = page.getByRole('button', { name: /Films/i });
+    if (await filmsTab.isVisible()) {
+      await filmsTab.click();
+      await expect(page).toHaveURL(/tab=films/);
+    }
+  });
+
+  test('Search Page Empty Discovery State and Suggestion Pills', async ({ page }) => {
+    await page.goto('/search', { waitUntil: 'domcontentloaded' });
+
+    // Verify empty state hero
+    await expect(page.locator('h1').first()).toContainText(/Search CineVault/i);
+
+    // Verify suggested search pills exist and are clickable
+    const pill = page.locator('button:has-text("Christopher Nolan"), button:has-text("Dune"), button:has-text("Studio Ghibli")').first();
+    await expect(pill).toBeVisible();
+    await pill.click();
+
+    // Verify URL updated with query
+    await expect(page).toHaveURL(/\/search\?q=/);
+  });
+
 });

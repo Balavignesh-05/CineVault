@@ -9,14 +9,14 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
  */
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-background selection:bg-primary selection:text-black">
+    <div className="flex min-h-screen flex-col bg-background selection:bg-primary selection:text-[#0B0F14]">
       <Suspense
         fallback={
           <div
             style={{
               height: '64px',
-              background: '#0c0f14',
-              borderBottom: '1px solid rgba(255,255,255,0.06)',
+              background: '#0B0F14',
+              borderBottom: '1px solid #273442',
               position: 'fixed',
               top: 0,
               left: 0,

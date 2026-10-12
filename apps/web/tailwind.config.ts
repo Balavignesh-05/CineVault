@@ -32,7 +32,7 @@ const config: Config = {
         overlay: 'var(--color-bg-overlay)',
         primary: {
           DEFAULT: 'var(--color-accent-primary)',
-          foreground: '#ffffff',
+          foreground: '#0B0F14',
           hover: 'var(--color-accent-primary-hover)',
           muted: 'var(--color-accent-primary-muted)',
         },
@@ -47,7 +47,7 @@ const config: Config = {
         accent: {
           DEFAULT: 'var(--color-bg-hover)',
           foreground: 'var(--color-text-primary)',
-          amber: 'var(--color-accent-secondary)',
+          amber: 'var(--color-accent-amber)',
           violet: 'var(--color-accent-tertiary)',
         },
         destructive: {

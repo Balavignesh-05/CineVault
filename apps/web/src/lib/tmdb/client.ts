@@ -447,9 +447,41 @@ export async function searchMulti(
   query: string,
   page = 1,
   signal?: AbortSignal,
-): Promise<TMDBPaginatedResult<TMDBMovie>> {
-  return tmdbFetch<TMDBPaginatedResult<TMDBMovie>>(
+): Promise<TMDBPaginatedResult<any>> {
+  return tmdbFetch<TMDBPaginatedResult<any>>(
     '/search/multi',
+    { query, page, include_adult: false },
+    0,
+    3,
+    signal
+  );
+}
+
+// ── TV Series Search ──────────────────────────────────────────
+
+export async function searchTv(
+  query: string,
+  page = 1,
+  signal?: AbortSignal,
+): Promise<TMDBPaginatedResult<TMDBTvSeries>> {
+  return tmdbFetch<TMDBPaginatedResult<TMDBTvSeries>>(
+    '/search/tv',
+    { query, page, include_adult: false },
+    0,
+    3,
+    signal
+  );
+}
+
+// ── Person Search ─────────────────────────────────────────────
+
+export async function searchPeople(
+  query: string,
+  page = 1,
+  signal?: AbortSignal,
+): Promise<TMDBPaginatedResult<TMDBPerson>> {
+  return tmdbFetch<TMDBPaginatedResult<TMDBPerson>>(
+    '/search/person',
     { query, page, include_adult: false },
     0,
     3,

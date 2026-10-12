@@ -59,7 +59,7 @@ export function MediaCard({
       )}
     >
       {/* Poster Container */}
-      <div className="relative aspect-[2/3] w-full bg-[#161a22] rounded-2xl overflow-hidden border border-white/[0.08] shadow-md group-hover:border-primary/50 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.7)] transition-all duration-300">
+      <div className="relative aspect-[2/3] w-full bg-[#131A22] rounded-2xl overflow-hidden border border-[#273442] shadow-md group-hover:border-primary/50 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.7)] transition-all duration-300">
         
         {/* Rank Badge */}
         {rank && (
@@ -98,7 +98,7 @@ export function MediaCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 backdrop-blur-[2px] transition-opacity duration-200 z-10 flex flex-col justify-end p-3 gap-2.5">
           <Link
             href={linkHref}
-            className="w-full text-center bg-primary hover:bg-primary-hover text-black font-black py-2 rounded-xl text-xs uppercase tracking-wider transition-all transform hover:scale-[1.02] shadow-lg"
+            className="w-full text-center bg-primary hover:bg-primary-hover text-[#0B0F14] font-black py-2 rounded-xl text-xs uppercase tracking-wider transition-all transform hover:scale-[1.02] shadow-lg"
           >
             Details
           </Link>

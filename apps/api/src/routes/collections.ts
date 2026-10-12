@@ -9,7 +9,7 @@ const router: Router = Router();
 // GET /api/v1/collections/?userId=&page=
 router.get('/', optionalAuth, async (req: AuthRequest, res, next) => {
   try {
-    const { userId, page = '1', limit = '20' } = req.query;
+    const { userId, page = '1', limit = '20', search, q } = req.query;
     const parsedLimit = parseInt(limit as string, 10); const take = Math.min(isNaN(parsedLimit) ? 20 : parsedLimit, 100);
     const parsedPage = parseInt(page as string, 10); const currentPage = isNaN(parsedPage) ? 1 : Math.max(1, parsedPage); const skip = (currentPage - 1) * take;
 
@@ -21,6 +21,14 @@ router.get('/', optionalAuth, async (req: AuthRequest, res, next) => {
       }
     } else {
       where.isPublic = true;
+    }
+
+    const searchQuery = String(search || q || '').trim();
+    if (searchQuery) {
+      where.OR = [
+        { title: { contains: searchQuery, mode: 'insensitive' } },
+        { description: { contains: searchQuery, mode: 'insensitive' } },
+      ];
     }
 
     let collections: any[] = [];

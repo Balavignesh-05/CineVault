@@ -3,10 +3,10 @@
   top: 0;
   z-index: var(--z-sticky, 200);
   height: 64px;
-  background: rgba(11, 14, 20, 0.85);
+  background: rgba(11, 15, 20, 0.92);
   backdrop-filter: blur(24px) saturate(1.2);
   -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--color-border-default, #273442);
   transition: all var(--transition-base, 0.25s);
 }
 
@@ -31,8 +31,8 @@
 }
 
 .logoIcon {
-  color: var(--color-accent-primary);
-  filter: drop-shadow(0 0 8px rgba(232, 98, 42, 0.5));
+  color: var(--color-accent-primary, #35D6A0);
+  filter: drop-shadow(0 0 10px rgba(53, 214, 160, 0.4));
 }
 
 .logoText {
@@ -63,8 +63,8 @@
 
 .searchIcon {
   position: absolute;
-  left: 12px;
-  color: var(--color-text-muted);
+  left: 14px;
+  color: var(--color-text-muted, #6B7D90);
   pointer-events: none;
   transition: color var(--transition-fast);
 }
@@ -72,30 +72,30 @@
 .searchInput {
   width: 100%;
   height: 38px;
-  padding: 0 12px 0 36px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 44px 0 40px;
+  background: var(--color-bg-surface, #131A22);
+  border: 1px solid var(--color-border-default, #273442);
   border-radius: var(--radius-full);
-  color: var(--color-text-primary);
+  color: var(--color-text-primary, #F4F3EC);
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 13.5px;
   outline: none;
   transition: all var(--transition-fast);
 }
 
 .searchInput::placeholder {
-  color: var(--color-text-disabled);
+  color: var(--color-text-muted, #6B7D90);
 }
 
 .searchInput:focus,
 .searchFocused .searchInput {
-  border-color: rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+  border-color: var(--color-accent-primary, #35D6A0);
+  background: var(--color-bg-elevated, #1A2430);
+  box-shadow: 0 0 0 2px rgba(53, 214, 160, 0.22), 0 0 16px rgba(53, 214, 160, 0.1);
 }
 
 .searchFocused .searchIcon {
-  color: var(--color-text-primary);
+  color: var(--color-accent-primary, #35D6A0);
 }
 
 /* ── Navigation ────────────────────────────────────────── */
@@ -120,16 +120,16 @@
 }
 
 .navLink:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.08);
+  color: #F4F3EC;
+  background: var(--color-bg-elevated, #1A2430);
+  border-color: var(--color-border-default, #273442);
 }
 
 .navLinkActive {
-  color: #00e054;
-  background: rgba(0, 224, 84, 0.1);
-  border-color: rgba(0, 224, 84, 0.25);
-  box-shadow: 0 0 12px rgba(0, 224, 84, 0.15);
+  color: var(--color-accent-primary, #35D6A0);
+  background: var(--color-accent-primary-muted, rgba(53, 214, 160, 0.12));
+  border-color: rgba(53, 214, 160, 0.28);
+  box-shadow: 0 0 12px rgba(53, 214, 160, 0.15);
 }
 
 /* ── Actions ───────────────────────────────────────────── */
