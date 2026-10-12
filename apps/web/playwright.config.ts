@@ -38,6 +38,6 @@ export default defineConfig({
     command: 'pnpm --filter @cinevault/web start -p 3000',
     url: 'http://localhost:3000',
     reuseExistingServer: true,
-    timeout: 60000,
+    timeout: 120000,
   },
 });

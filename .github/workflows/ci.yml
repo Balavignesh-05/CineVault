@@ -78,5 +78,8 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Build Web Application
+        run: pnpm --filter @cinevault/web build
+
       - name: Run Playwright E2E Tests
         run: pnpm --filter @cinevault/web test:e2e
