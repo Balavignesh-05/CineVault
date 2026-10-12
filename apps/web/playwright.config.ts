@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const isRemote = baseURL.startsWith('https://') || (baseURL.startsWith('http://') && !baseURL.includes('localhost') && !baseURL.includes('127.0.0.1'));
+
 export default defineConfig({
   testDir: './e2e',
   timeout: 45000,
@@ -10,7 +13,7 @@ export default defineConfig({
   workers: 1,
   reporter: [['list'], ['json', { outputFile: 'e2e-report.json' }]],
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL,
     trace: 'off',
     screenshot: 'off',
     video: 'off',
@@ -31,7 +34,7 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
+  webServer: isRemote ? undefined : {
     command: 'pnpm --filter @cinevault/web start -p 3000',
     url: 'http://localhost:3000',
     reuseExistingServer: true,

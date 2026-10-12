@@ -31,10 +31,25 @@ export function HeroSection({ movies }: HeroSectionProps) {
     return () => clearInterval(interval);
   }, [movies.length]);
 
-  if (!movies || movies.length === 0 || !movies[currentIndex]) return null;
+  if (!movies || movies.length === 0 || !movies[currentIndex]) {
+    return (
+      <section className="relative w-full h-[360px] overflow-hidden flex items-center justify-center bg-[#0b0e14] text-center px-4">
+        <div className="space-y-3 max-w-xl">
+          <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
+            In the Spotlight
+          </span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+            Discover Cinema on CineVault
+          </h1>
+          <p className="text-text-muted text-sm">
+            Explore trending films, curate your watchlist, and share reviews with fellow cinephiles.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   const activeMovie = movies[currentIndex] || movies[0];
-  if (!activeMovie) return null;
 
   // Defensively extract data supporting both camelCase and snake_case TMDB objects
   const backdrop = activeMovie.backdropPath || activeMovie.backdrop_path || null;
@@ -130,11 +145,11 @@ export function HeroSection({ movies }: HeroSectionProps) {
           </div>
           
           {/* Movie Title */}
-          <motion.h1 
+          <h1
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl leading-[1.08] line-clamp-2"
           >
             {title}
-          </motion.h1>
+          </h1>
 
           {/* Metadata Row */}
           <motion.div className="flex items-center gap-3 text-xs sm:text-sm font-bold text-white/80 drop-shadow-md">

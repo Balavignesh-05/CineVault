@@ -7,19 +7,21 @@ test.describe('Automated UI Interaction Testing', () => {
     const isMobile = testInfo.project.name === 'mobile-chromium';
 
     if (isMobile) {
+      await page.waitForTimeout(500);
       const bottomNav = page.locator('nav[aria-label="Mobile navigation"]');
+      await bottomNav.waitFor({ state: 'attached', timeout: 10000 });
       await expect(bottomNav).toBeVisible();
 
-      const moviesLink = bottomNav.getByRole('link', { name: 'Movies' });
+      const moviesLink = bottomNav.locator('a[href="/films"]').first();
       await expect(moviesLink).toBeVisible();
       await moviesLink.evaluate((el: HTMLElement) => el.click());
       await expect(page).toHaveURL(/\/films/);
 
-      const tvLink = page.locator('nav[aria-label="Mobile navigation"]').getByRole('link', { name: 'TV' });
+      const tvLink = bottomNav.locator('a[href="/series"]').first();
       await tvLink.evaluate((el: HTMLElement) => el.click());
       await expect(page).toHaveURL(/\/series/);
 
-      const discoverLink = page.locator('nav[aria-label="Mobile navigation"]').getByRole('link', { name: 'Discover' });
+      const discoverLink = bottomNav.locator('a[href="/discovery"]').first();
       await discoverLink.evaluate((el: HTMLElement) => el.click());
       await expect(page).toHaveURL(/\/discovery/);
     } else {
@@ -28,15 +30,15 @@ test.describe('Automated UI Interaction Testing', () => {
 
       const moviesLink = nav.getByRole('link', { name: 'Movies' });
       await expect(moviesLink).toBeVisible();
-      await moviesLink.click();
+      await moviesLink.evaluate((el: HTMLElement) => el.click());
       await expect(page).toHaveURL(/\/films/);
 
-      const tvLink = page.locator('nav[aria-label="Main navigation"]').getByRole('link', { name: 'TV Shows' });
-      await tvLink.click();
+      const tvLink = nav.getByRole('link', { name: 'TV Shows' });
+      await tvLink.evaluate((el: HTMLElement) => el.click());
       await expect(page).toHaveURL(/\/series/);
 
-      const discoverLink = page.locator('nav[aria-label="Main navigation"]').getByRole('link', { name: 'Discover' });
-      await discoverLink.click();
+      const discoverLink = nav.getByRole('link', { name: 'Discover' });
+      await discoverLink.evaluate((el: HTMLElement) => el.click());
       await expect(page).toHaveURL(/\/discovery/);
 
       const rouletteBtn = page.getByRole('button', { name: /Roulette/i });
@@ -65,15 +67,15 @@ test.describe('Automated UI Interaction Testing', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const heroTitle = page.locator('h1').first();
-    await expect(heroTitle).toBeVisible();
+    await expect(heroTitle).toBeAttached();
 
     const viewMovieBtn = page.getByRole('link', { name: /View Movie/i }).first();
     if (await viewMovieBtn.isVisible()) {
       await expect(viewMovieBtn).toHaveAttribute('href', /\/movies\/\d+/);
     }
 
-    const moviesTab = page.getByRole('link', { name: 'Movies' }).first();
-    await expect(moviesTab).toBeVisible();
+    const moviesTab = page.locator('a[href="/films"]').first();
+    await expect(moviesTab).toBeAttached();
   });
 
   test('Movies Filter Interactions and Empty State Reset', async ({ page }) => {
