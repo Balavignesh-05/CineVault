@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { ReviewComposerModal } from '@/components/modals/ReviewComposerModal';
 import { AddToCollectionModal } from '@/components/collections/AddToCollectionModal';
+import { StarRating } from '@/components/rating/StarRating';
 
 interface MovieActionPanelProps {
   movieId: number;
@@ -284,51 +285,22 @@ export function MovieActionPanel({
           </div>
 
           {/* Star Bar with half-star precision */}
-          <div
-            className="flex items-center justify-center gap-1 py-1"
-            onMouseLeave={() => setHoverRating(null)}
-          >
-            {[0, 1, 2, 3, 4].map((starIndex) => {
-              const fullVal = starIndex + 1;
-              const halfVal = starIndex + 0.5;
-              const isFullFilled = activeRating !== null && activeRating >= fullVal;
-              const isHalfFilled =
-                activeRating !== null && activeRating >= halfVal && !isFullFilled;
-
-              return (
-                <div key={starIndex} className="relative w-8 h-8 flex items-center justify-center cursor-pointer">
-                  {/* Star Icon Display */}
-                  <Star
-                    size={24}
-                    className={`transition-colors pointer-events-none ${
-                      isFullFilled
-                        ? 'fill-[#35D6A0] text-[#35D6A0] drop-shadow-[0_0_6px_rgba(53,214,160,0.4)]'
-                        : isHalfFilled
-                        ? 'fill-transparent text-[#273442]'
-                        : 'fill-transparent text-[#273442]'
-                    }`}
-                  />
-                  {isHalfFilled && (
-                    <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none" style={{ clipPath: 'inset(0 50% 0 0)' }}>
-                      <Star size={24} className="fill-[#35D6A0] text-[#35D6A0] drop-shadow-[0_0_6px_rgba(53,214,160,0.4)]" />
-                    </div>
-                  )}
-
-                  {/* Left half hover/click (half star) */}
-                  <div
-                    className="absolute left-0 top-0 w-1/2 h-full z-10"
-                    onMouseEnter={() => setHoverRating(halfVal)}
-                    onClick={() => requireAuth(() => setRatingMutation.mutate(halfVal))}
-                  />
-                  {/* Right half hover/click (full star) */}
-                  <div
-                    className="absolute right-0 top-0 w-1/2 h-full z-10"
-                    onMouseEnter={() => setHoverRating(fullVal)}
-                    onClick={() => requireAuth(() => setRatingMutation.mutate(fullVal))}
-                  />
-                </div>
-              );
-            })}
+          <div className="flex items-center justify-center py-1">
+            <StarRating
+              value={currentRatingFive || 0}
+              onChange={(val) =>
+                requireAuth(() => {
+                  if (val > 0) {
+                    setRatingMutation.mutate(val);
+                  } else {
+                    removeRatingMutation.mutate();
+                  }
+                })
+              }
+              size="lg"
+              allowHalf={true}
+              showLabel={false}
+            />
           </div>
 
           <div className="h-4 text-[11px] font-semibold text-[#35D6A0]">

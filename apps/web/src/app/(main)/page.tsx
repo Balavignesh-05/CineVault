@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import { getTrending, getMovieDetails } from '@/lib/tmdb/client';
 import { HeroSection } from '@/components/home/HeroSection';
 import { CategoryTabs } from '@/components/home/CategoryTabs';
-import { PeopleRail } from '@/components/home/PeopleRail';
 import { 
   TrendingNowRow,
   PopularMoviesRow,
@@ -54,11 +53,6 @@ export default async function HomePage() {
         {/* Popular TV Shows Rail */}
         <Suspense fallback={<RowSkeleton />}>
           <PopularTvShowsRow />
-        </Suspense>
-
-        {/* Popular People Circular Rail */}
-        <Suspense fallback={<RowSkeleton />}>
-          <PeopleRail />
         </Suspense>
 
         {/* AI Recommendations Rail */}

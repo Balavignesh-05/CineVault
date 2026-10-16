@@ -4,9 +4,6 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2, LogIn } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { login } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/auth';
 
@@ -36,61 +33,78 @@ export default function SignInPage() {
 
   return (
     <div className="w-full space-y-6">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-white">Welcome back</h1>
-        <p className="text-text-muted">Sign in to your CineVault account</p>
+      <div className="text-center space-y-1.5">
+        <h1 className="text-2xl sm:text-3xl font-black text-[#F4F3EC] tracking-tight">Welcome back</h1>
+        <p className="text-xs sm:text-sm text-[#9AA8B7]">Sign in to your CineVault account</p>
       </div>
+
       {error && (
-        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">{error}</div>
+        <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-xs sm:text-sm font-medium">
+          {error}
+        </div>
       )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <Label htmlFor="signin-email" className="text-xs font-semibold text-text-secondary">Email</Label>
-          <Input
+          <label htmlFor="signin-email" className="block text-xs font-bold text-[#9AA8B7] uppercase tracking-wider">
+            Email
+          </label>
+          <input
             id="signin-email"
             type="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
-            className="bg-[#0b0e14]/80 border-white/10 text-white placeholder:text-text-muted focus-visible:ring-primary h-11 rounded-xl"
+            className="w-full h-11 px-3.5 bg-[#0B0F14] border border-[#273442] rounded-xl text-[#F4F3EC] placeholder:text-[#9AA8B7]/60 focus:border-[#35D6A0] focus:outline-none focus:ring-1 focus:ring-[#35D6A0] text-sm transition-colors"
           />
         </div>
+
         <div className="space-y-1.5">
-          <Label htmlFor="signin-password" className="text-xs font-semibold text-text-secondary">Password</Label>
-          <div className="relative">
-            <Input
+          <label htmlFor="signin-password" className="block text-xs font-bold text-[#9AA8B7] uppercase tracking-wider">
+            Password
+          </label>
+          <div className="relative flex items-center">
+            <input
               id="signin-password"
               type={showPw ? 'text' : 'password'}
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="bg-[#0b0e14]/80 border-white/10 text-white placeholder:text-text-muted focus-visible:ring-primary h-11 rounded-xl pr-10"
+              className="w-full h-11 pl-3.5 pr-11 bg-[#0B0F14] border border-[#273442] rounded-xl text-[#F4F3EC] placeholder:text-[#9AA8B7]/60 focus:border-[#35D6A0] focus:outline-none focus:ring-1 focus:ring-[#35D6A0] text-sm transition-colors"
             />
             <button
               type="button"
-              onClick={() => setShowPw(p => !p)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white p-1 rounded-md transition-colors"
-              aria-label={showPw ? "Hide password" : "Show password"}
+              onClick={() => setShowPw((p) => !p)}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-[#9AA8B7] hover:text-[#F4F3EC] rounded-lg transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-[#35D6A0]"
+              aria-label={showPw ? 'Hide password' : 'Show password'}
             >
               {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
         </div>
-        <Button
+
+        <button
           type="submit"
-          className="w-full bg-primary text-black font-bold hover:bg-primary-hover transition-all h-11 rounded-xl shadow-[0_0_20px_rgba(0,224,84,0.25)]"
           disabled={isLoading}
+          className="w-full h-11 bg-[#35D6A0] hover:bg-[#6BE8BC] text-[#0B0F14] font-bold rounded-xl text-sm transition-all shadow-[0_0_20px_rgba(53,214,160,0.25)] flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
         >
-          {isLoading ? <Loader2 size={16} className="animate-spin mr-2" /> : <LogIn size={16} className="mr-2" />}
-          Sign In
-        </Button>
+          {isLoading ? (
+            <Loader2 size={16} className="animate-spin" />
+          ) : (
+            <LogIn size={16} />
+          )}
+          <span>Sign In</span>
+        </button>
       </form>
-      <p className="text-center text-sm text-text-muted">
+
+      <div className="pt-2 text-center text-xs sm:text-sm text-[#9AA8B7]">
         Don&apos;t have an account?{' '}
-        <Link href="/signup" className="text-primary hover:underline font-semibold">Create one</Link>
-      </p>
+        <Link href="/signup" className="text-[#35D6A0] hover:underline font-bold ml-1">
+          Create one
+        </Link>
+      </div>
     </div>
   );
 }

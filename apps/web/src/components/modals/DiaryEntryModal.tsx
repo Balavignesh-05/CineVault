@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Star, Calendar, RotateCcw, Tag, Check, Film } from 'lucide-react';
+import { X, Calendar, RotateCcw, Tag, Check, Film } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { StarRating } from '@/components/rating/StarRating';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
 import { toast } from 'sonner';
@@ -120,22 +121,17 @@ export function DiaryEntryModal({
 
               <form onSubmit={handleSubmit} className="p-5 space-y-5">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Your Rating</label>
-                  <div className="flex items-center gap-1" onMouseLeave={() => setHoveredRating(0)}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setRating(star)}
-                        onMouseEnter={() => setHoveredRating(star)}
-                        className="transition-transform hover:scale-110"
-                      >
-                        <Star size={28} className={`transition-colors ${star <= displayRating ? 'text-accent-amber fill-[#ff8000]' : 'text-[#2c3440]'}`} />
-                      </button>
-                    ))}
-                    {rating > 0 && (
-                      <button type="button" onClick={() => setRating(0)} className="ml-2 text-xs text-text-muted hover:text-white transition-colors">Clear</button>
-                    )}
+                  <label className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                    Your Rating
+                  </label>
+                  <div className="flex items-center h-10 px-3 bg-background rounded-xl border border-border-subtle w-fit">
+                    <StarRating
+                      value={rating}
+                      onChange={(newRating) => setRating(newRating)}
+                      size="md"
+                      allowHalf={true}
+                      showLabel={true}
+                    />
                   </div>
                 </div>
 

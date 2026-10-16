@@ -233,13 +233,6 @@ export function AppHeader() {
           >
             Discover
           </Link>
-          <Link
-            href="/person"
-            className={`${styles.navLink} ${pathname?.startsWith('/person') ? styles.navLinkActive : ''}`}
-            aria-current={pathname?.startsWith('/person') ? 'page' : undefined}
-          >
-            People
-          </Link>
 
           <button
             onClick={() => setRouletteOpen(true)}
@@ -362,7 +355,6 @@ export function AppHeader() {
               <Link href="/discovery" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Discover</Link>
               <Link href="/films" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Movies</Link>
               <Link href="/watchlist" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Watchlist</Link>
-              <Link href="/person" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">People</Link>
               <Link href="/lists" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Lists</Link>
               <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">About & Attribution</Link>
 

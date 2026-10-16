@@ -11,7 +11,7 @@ const routesToTest = [
   { path: '/films', name: 'Movies' },
   { path: '/series', name: 'TV Shows' },
   { path: '/discovery', name: 'Discover' },
-  { path: '/person', name: 'People' },
+  { path: '/person/287', name: 'Person Detail (Brad Pitt)' },
   { path: '/movies/550', name: 'Movie Detail (Fight Club)' },
   { path: '/series/1399', name: 'Series Detail (Game of Thrones)' },
   { path: '/signin', name: 'Sign In' },

@@ -34,10 +34,10 @@ test.describe('Automated Visual Testing & Screenshots', () => {
     await page.waitForTimeout(500);
     await page.screenshot({ path: path.join(screenshotsDir, 'desktop-discover.png'), fullPage: false });
 
-    // 5. People desktop
-    await page.goto('/person', { waitUntil: 'domcontentloaded' });
+    // 5. Lists desktop
+    await page.goto('/lists', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(500);
-    await page.screenshot({ path: path.join(screenshotsDir, 'desktop-people.png'), fullPage: false });
+    await page.screenshot({ path: path.join(screenshotsDir, 'desktop-lists.png'), fullPage: false });
 
     // 6. Movie Detail desktop
     await page.goto('/movies/550', { waitUntil: 'domcontentloaded' });

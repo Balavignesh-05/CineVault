@@ -239,3 +239,65 @@ h1, h2, h3, h4, h5, h6 {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* ── Native Forms & Autofill Dark Theme Overrides ───────────── */
+:root {
+  color-scheme: dark;
+}
+
+/* Chromium / WebKit autofill styling override: prevents pale-blue inputs */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #0B0F14 inset !important;
+  -webkit-text-fill-color: #F4F3EC !important;
+  caret-color: #35D6A0 !important;
+  border-color: #273442 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Suppress native Edge/IE password reveal & clear buttons to avoid double eye icon */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+/* ── Cinematic Poster Marquee Animations ──────────────────────── */
+@keyframes marquee-left {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-marquee-left {
+  animation: marquee-left 65s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-right {
+  animation: marquee-right 75s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-left,
+  .animate-marquee-right {
+    animation: none !important;
+  }
+}
+
