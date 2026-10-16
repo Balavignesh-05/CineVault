@@ -138,7 +138,9 @@ export function FilmRouletteModal({ isOpen, onClose }: FilmRouletteModalProps) {
                   #{pickedMovie.rank} Rank
                 </div>
                 <h3 className="text-xl font-bold text-white">{pickedMovie.title} ({pickedMovie.year})</h3>
-                <p className="text-xs text-text-secondary font-mono">Directed by {pickedMovie.director}</p>
+                {pickedMovie.director && (
+                  <p className="text-xs text-text-secondary font-mono">Directed by {pickedMovie.director}</p>
+                )}
                 <div className="text-sm font-bold font-mono text-accent-amber pt-1">
                   ★ {pickedMovie.rating.toFixed(1)} / 10 IMDb Rating
                 </div>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Film, Tv, Compass, Bookmark, User } from 'lucide-react';
+import { Home, Film, BookOpen, Compass, Bookmark, User } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
@@ -13,7 +13,7 @@ export function MobileBottomNav() {
   const navItems = [
     { name: 'Home', href: '/', icon: Home, exact: true },
     { name: 'Movies', href: '/films', icon: Film, exact: false },
-    { name: 'TV', href: '/series', icon: Tv, exact: false },
+    { name: 'Lists', href: '/lists', icon: BookOpen, exact: false },
     { name: 'Discover', href: '/discovery', icon: Compass, exact: false },
     isAuthenticated
       ? { name: 'Watchlist', href: '/watchlist', icon: Bookmark, exact: false }

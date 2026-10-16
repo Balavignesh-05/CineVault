@@ -17,9 +17,9 @@ test.describe('Automated UI Interaction Testing', () => {
       await moviesLink.evaluate((el: HTMLElement) => el.click());
       await expect(page).toHaveURL(/\/films/);
 
-      const tvLink = bottomNav.locator('a[href="/series"]').first();
-      await tvLink.evaluate((el: HTMLElement) => el.click());
-      await expect(page).toHaveURL(/\/series/);
+      const listsLink = bottomNav.locator('a[href="/lists"]').first();
+      await listsLink.evaluate((el: HTMLElement) => el.click());
+      await expect(page).toHaveURL(/\/lists/);
 
       const discoverLink = bottomNav.locator('a[href="/discovery"]').first();
       await discoverLink.evaluate((el: HTMLElement) => el.click());
@@ -33,9 +33,9 @@ test.describe('Automated UI Interaction Testing', () => {
       await moviesLink.evaluate((el: HTMLElement) => el.click());
       await expect(page).toHaveURL(/\/films/);
 
-      const tvLink = nav.getByRole('link', { name: 'TV Shows' });
-      await tvLink.evaluate((el: HTMLElement) => el.click());
-      await expect(page).toHaveURL(/\/series/);
+      const listsLink = nav.getByRole('link', { name: 'Lists' });
+      await listsLink.evaluate((el: HTMLElement) => el.click());
+      await expect(page).toHaveURL(/\/lists/);
 
       const discoverLink = nav.getByRole('link', { name: 'Discover' });
       await discoverLink.evaluate((el: HTMLElement) => el.click());

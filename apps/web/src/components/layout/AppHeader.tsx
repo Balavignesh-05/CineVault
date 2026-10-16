@@ -220,11 +220,11 @@ export function AppHeader() {
             Movies
           </Link>
           <Link
-            href="/series"
-            className={`${styles.navLink} ${pathname?.startsWith('/series') ? styles.navLinkActive : ''}`}
-            aria-current={pathname?.startsWith('/series') ? 'page' : undefined}
+            href="/lists"
+            className={`${styles.navLink} ${pathname?.startsWith('/lists') ? styles.navLinkActive : ''}`}
+            aria-current={pathname?.startsWith('/lists') ? 'page' : undefined}
           >
-            TV Shows
+            Lists
           </Link>
           <Link
             href="/discovery"
@@ -361,7 +361,7 @@ export function AppHeader() {
             <nav className="flex flex-col py-2">
               <Link href="/discovery" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Discover</Link>
               <Link href="/films" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Movies</Link>
-              <Link href="/series" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">TV Shows</Link>
+              <Link href="/watchlist" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Watchlist</Link>
               <Link href="/person" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">People</Link>
               <Link href="/lists" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">Lists</Link>
               <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm text-text-secondary hover:text-white hover:bg-elevated transition-colors">About & Attribution</Link>

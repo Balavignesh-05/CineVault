@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Sparkles, Film, Tv, Compass, Users } from 'lucide-react';
+import { Sparkles, Film, BookOpen, Compass, Users } from 'lucide-react';
 
 interface CategoryTabsProps {
   activeTab?: string;
@@ -9,7 +9,7 @@ export function CategoryTabs({ activeTab = 'For You' }: CategoryTabsProps) {
   const tabs = [
     { name: 'For You', href: '/', icon: Sparkles },
     { name: 'Movies', href: '/films', icon: Film },
-    { name: 'TV Shows', href: '/series', icon: Tv },
+    { name: 'Lists', href: '/lists', icon: BookOpen },
     { name: 'Discover', href: '/discovery', icon: Compass },
     { name: 'People', href: '/person', icon: Users },
   ];

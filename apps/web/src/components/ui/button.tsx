@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-gradient-to-r from-[var(--color-accent-primary)] to-orange-500 text-white hover:opacity-90 shadow-sm',
+          'bg-[var(--color-accent-primary)] text-[#0B0F14] font-bold hover:bg-[var(--color-accent-primary-hover)] shadow-sm',
         secondary:
           'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)]',
         outline:
