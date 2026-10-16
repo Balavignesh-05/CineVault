@@ -12,7 +12,7 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex justify-between items-start py-2.5 border-b border-border-subtle last:border-0">
       <dt className="text-text-muted text-sm font-medium shrink-0 mr-4">{label}</dt>
-      <dd className="text-white text-sm font-semibold text-right">{value}</dd>
+      <dd className="text-white text-sm font-semibold text-right" suppressHydrationWarning>{value}</dd>
     </div>
   );
 }
@@ -52,7 +52,7 @@ export function MovieDetailsSection({ movie }: MovieDetailsSectionProps) {
   });
 
   const releaseFormatted = movie.releaseDate
-    ? new Date(movie.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    ? new Date(movie.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })
     : null;
 
   const runtimeHours = movie.runtime ? Math.floor(movie.runtime / 60) : 0;

@@ -11,7 +11,7 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex justify-between items-start py-2.5 border-b border-border-subtle last:border-0">
       <dt className="text-text-muted text-sm font-medium shrink-0 mr-4">{label}</dt>
-      <dd className="text-white text-sm font-semibold text-right">{value}</dd>
+      <dd className="text-white text-sm font-semibold text-right" suppressHydrationWarning>{value}</dd>
     </div>
   );
 }
@@ -44,11 +44,11 @@ function RatingHistogram({ voteCount, voteAverage }: { voteCount: number; voteAv
 
 export function SeriesDetailsSection({ series }: SeriesDetailsSectionProps) {
   const firstAirFormatted = series.firstAirDate
-    ? new Date(series.firstAirDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    ? new Date(series.firstAirDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })
     : null;
     
   const lastAirFormatted = series.lastAirDate
-    ? new Date(series.lastAirDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    ? new Date(series.lastAirDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })
     : null;
 
   const creators = series.crew.filter(c => c.job === 'Creator' || c.job === 'Executive Producer');
