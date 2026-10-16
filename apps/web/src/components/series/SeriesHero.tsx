@@ -49,11 +49,11 @@ export function SeriesHero({ series }: SeriesHeroProps) {
             
             <div className="flex flex-col gap-4">
               <div className="self-start">
-                <Badge variant="outline" className="border-[#3D3D55] text-muted-foreground bg-[var(--color-bg-surface)]/50 backdrop-blur">
+                <Badge variant="outline" className="border-[#273442] text-muted-foreground bg-[var(--color-bg-surface)]/50 backdrop-blur">
                   TV Series
                 </Badge>
                 {series.status === 'Ended' && (
-                  <Badge variant="outline" className="border-[#3D3D55] text-muted-foreground bg-[var(--color-bg-surface)]/50 backdrop-blur ml-2">
+                  <Badge variant="outline" className="border-[#273442] text-muted-foreground bg-[var(--color-bg-surface)]/50 backdrop-blur ml-2">
                     Ended
                   </Badge>
                 )}
@@ -72,14 +72,14 @@ export function SeriesHero({ series }: SeriesHeroProps) {
 
               <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-muted-foreground">
                 <span>{yearRange}</span>
-                <span className="w-1 h-1 rounded-full bg-[#3D3D55]" />
+                <span className="w-1 h-1 rounded-full bg-[#273442]" />
                 <span>{series.numberOfSeasons} {series.numberOfSeasons === 1 ? 'Season' : 'Seasons'}</span>
-                <span className="w-1 h-1 rounded-full bg-[#3D3D55]" />
+                <span className="w-1 h-1 rounded-full bg-[#273442]" />
                 <span>{series.numberOfEpisodes} Episodes</span>
                 
                 {series.genres.length > 0 && (
                   <>
-                    <span className="w-1 h-1 rounded-full bg-[#3D3D55]" />
+                    <span className="w-1 h-1 rounded-full bg-[#273442]" />
                     <div className="flex flex-wrap gap-2">
                       {series.genres.map(g => (
                         <span key={g.id} className="text-foreground">{g.name}</span>

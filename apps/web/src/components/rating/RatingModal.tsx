@@ -26,7 +26,7 @@ export function RatingModal({ tmdbId, filmTitle, posterPath, open, onClose }: Ra
         
         <div className="flex flex-col items-center justify-center py-6 gap-6">
           {posterPath && posterPath !== 'null' && posterPath !== 'undefined' && (
-            <div className="relative w-32 h-48 rounded-md overflow-hidden shadow-lg border border-[#3D3D55]">
+            <div className="relative w-32 h-48 rounded-md overflow-hidden shadow-lg border border-[#273442]">
               <Image 
                 src={`https://image.tmdb.org/t/p/w342${posterPath}`}
                 alt={filmTitle}

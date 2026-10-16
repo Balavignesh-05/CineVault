@@ -22,6 +22,7 @@ export async function TrendingNowRow() {
       subtitle="What audiences are streaming and logging today" 
       media={movies} 
       viewAllHref="/films" 
+      fetchEndpoint="/api/tmdb/trending?timeWindow=day"
     />
   );
 }
@@ -39,6 +40,7 @@ export async function PopularMoviesRow() {
       subtitle="Top box office favorites and community rated picks" 
       media={movies} 
       viewAllHref="/films" 
+      fetchEndpoint="/api/tmdb/popular"
     />
   );
 }
@@ -56,6 +58,7 @@ export async function PopularTvShowsRow() {
       subtitle="Binge-worthy drama, comedy, and critically acclaimed series" 
       media={series} 
       viewAllHref="/series" 
+      fetchEndpoint="/api/tmdb/discover/tv?sort_by=popularity.desc"
     />
   );
 }
@@ -70,6 +73,7 @@ export async function AiRecommendationsRow() {
       media={movies} 
       viewAllHref="/recommendations"
       variant="dark" 
+      fetchEndpoint="/api/tmdb/discover?sort_by=popularity.desc&with_genres=28,878,53"
     />
   );
 }
@@ -87,26 +91,26 @@ export async function ContinueWatchingRow() {
 export async function TopRatedMoviesRow() {
   const res = await getTopRated().catch(() => ({ results: [] }));
   const movies = res.results?.map(normalizeMovieCard) || [];
-  return <MediaSection title="Top Rated Movies" media={movies} viewAllHref="/films" />;
+  return <MediaSection title="Top Rated Movies" media={movies} viewAllHref="/films" fetchEndpoint="/api/tmdb/top-rated" />;
 }
 
 export async function TopRatedTvRow() {
   const res = await getTvTopRated().catch(() => ({ results: [] }));
   const series = res.results?.map(normalizeSeriesCard) || [];
-  return <MediaSection title="Top Rated TV Shows" media={series} viewAllHref="/series" />;
+  return <MediaSection title="Top Rated TV Shows" media={series} viewAllHref="/series" fetchEndpoint="/api/tmdb/discover/tv?sort_by=vote_average.desc" />;
 }
 
 export async function NowPlayingRow() {
   const res = await getNowPlaying().catch(() => ({ results: [] }));
   const movies = res.results?.map(normalizeMovieCard) || [];
-  return <MediaSection title="Now Playing" media={movies} variant="dark" />;
+  return <MediaSection title="Now Playing" media={movies} variant="dark" fetchEndpoint="/api/tmdb/now-playing" />;
 }
 
 export async function UpcomingMoviesRow() {
   const res = await getUpcoming().catch(() => ({ results: [] }));
   const today = new Date().toISOString().split('T')[0];
   const movies = res.results?.filter(m => m.release_date && m.release_date > today).map(normalizeMovieCard) || [];
-  return <MediaSection title="Upcoming Movies" media={movies} />;
+  return <MediaSection title="Upcoming Movies" media={movies} fetchEndpoint="/api/tmdb/upcoming" />;
 }
 
 export async function NewReleasesRow() {

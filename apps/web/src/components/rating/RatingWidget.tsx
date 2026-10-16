@@ -64,16 +64,16 @@ export function RatingWidget({ tmdbId, filmTitle, onRated }: RatingWidgetProps) 
             <motion.div
               key={i}
               whileHover={{ scale: 1.2 }}
-              className="cursor-pointer relative text-[#3D3D55]"
+              className="cursor-pointer relative text-[#273442] hover:text-[#35D6A0]/40 transition-colors"
               onMouseMove={(e) => handleMouseMove(e, i)}
               onClick={() => {
                 if (hoverRating) rateMutation.mutate(hoverRating);
               }}
             >
-              <Star className={`w-8 h-8 ${isFilled ? 'fill-[var(--color-accent-primary)] text-[var(--color-accent-primary)]' : ''}`} />
+              <Star className={`w-8 h-8 ${isFilled ? 'fill-[#35D6A0] text-[#35D6A0]' : ''}`} />
               {isHalf && (
                 <div className="absolute inset-0 overflow-hidden w-1/2">
-                  <Star className="w-8 h-8 fill-[var(--color-accent-primary)] text-[var(--color-accent-primary)]" />
+                  <Star className="w-8 h-8 fill-[#35D6A0] text-[#35D6A0]" />
                 </div>
               )}
             </motion.div>

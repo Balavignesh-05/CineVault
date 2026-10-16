@@ -180,4 +180,64 @@ test.describe('Automated UI Interaction Testing', () => {
     await expect(page).toHaveURL(/\/search\?q=/);
   });
 
+  test('Movie Detail Page 3-Column Composition, Info Tabs & Action Panel', async ({ page }) => {
+    await page.goto('/movies/550', { waitUntil: 'domcontentloaded' });
+
+    // Verify Title & Director
+    const titleHeading = page.locator('h1').first();
+    await expect(titleHeading).toBeVisible({ timeout: 15000 });
+    await expect(titleHeading).toContainText(/Fight Club/i);
+
+    // Verify Director link
+    const directorLink = page.locator('text=David Fincher').first();
+    await expect(directorLink).toBeVisible();
+
+    // Verify Left Column: Community stats bar
+    const statsBar = page.locator('[aria-label="Community activity metrics"]');
+    await expect(statsBar).toBeVisible();
+
+    // Verify Left Column: Where to Watch card
+    const whereToWatch = page.locator('text=Where to Watch').first();
+    await expect(whereToWatch).toBeVisible();
+
+    // Verify Center Column: Info Tabs
+    const castTab = page.getByRole('tab', { name: 'CAST' });
+    const crewTab = page.getByRole('tab', { name: 'CREW' });
+    const detailsTab = page.getByRole('tab', { name: 'DETAILS' });
+    const genresTab = page.getByRole('tab', { name: 'GENRES' });
+    const releasesTab = page.getByRole('tab', { name: 'RELEASES' });
+
+    await expect(castTab).toBeVisible();
+    await expect(crewTab).toBeVisible();
+    await expect(detailsTab).toBeVisible();
+    await expect(genresTab).toBeVisible();
+    await expect(releasesTab).toBeVisible();
+
+    // Check switching to CREW tab
+    await crewTab.click();
+    await expect(page.locator('text=Director:').or(page.locator('text=David Fincher')).first()).toBeVisible();
+
+    // Check switching to DETAILS tab
+    await detailsTab.click();
+    await expect(page.locator('text=Runtime').first()).toBeVisible();
+
+    // Check switching to GENRES tab
+    await genresTab.click();
+    await expect(page.locator('text=Drama').first()).toBeVisible();
+
+    // Verify Right Column: Movie Action Panel buttons
+    const watchBtn = page.getByRole('button', { name: /Watch/i }).first();
+    const likeBtn = page.getByRole('button', { name: /Like/i }).first();
+    const watchlistBtn = page.getByRole('button', { name: /Watchlist/i }).first();
+    await expect(watchBtn).toBeVisible();
+    await expect(likeBtn).toBeVisible();
+    await expect(watchlistBtn).toBeVisible();
+
+    // Verify Right Column: Ratings Histogram card
+    const ratingsCard = page.locator('text=Ratings').first();
+    await expect(ratingsCard).toBeVisible();
+    const histogram = page.locator('[aria-label="Rating distribution histogram"]');
+    await expect(histogram).toBeVisible();
+  });
+
 });

@@ -16,7 +16,7 @@ import {
 
 import { HomeFeed } from '@/components/home/HomeFeed';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const trending = await getTrending('week').catch(() => ({ results: [] }));

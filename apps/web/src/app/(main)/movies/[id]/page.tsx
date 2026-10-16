@@ -2,15 +2,14 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getMovieDetails, normalizeMovieDetails } from '@/lib/tmdb/client';
-import { CastSection } from '@/components/movie/CastSection';
-import { CrewSection } from '@/components/movie/CrewSection';
-import { MovieDetailsSection } from '@/components/movie/MovieDetailsSection';
-import { WatchProvidersSection } from '@/components/movie/WatchProvidersSection';
+import { MovieStatsBar } from '@/components/movie/MovieStatsBar';
+import { WhereToWatchCard } from '@/components/movie/WhereToWatchCard';
+import { MovieInfoTabs } from '@/components/movie/MovieInfoTabs';
+import { MovieActionPanel } from '@/components/movie/MovieActionPanel';
+import { MovieRatingsCard } from '@/components/movie/MovieRatingsCard';
 import { ReviewsSection } from '@/components/movie/ReviewsSection';
-import { FansSection } from '@/components/movie/FansSection';
-import { MovieActions } from '@/components/movie/MovieActions';
 import { SimilarFilmsSection } from '@/components/movie/SimilarFilmsSection';
-import { AlertCircle, ArrowLeft, Star, Clock, Calendar } from 'lucide-react';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +23,7 @@ export default async function MovieDetailPage({ params }: Props) {
 
   if (isNaN(movieId)) {
     return (
-      <div className="min-h-screen bg-background py-16 text-center text-text-muted">
+      <div className="min-h-screen bg-[#0B0F14] py-16 text-center text-[#9AA8B7]">
         Invalid movie ID.
       </div>
     );
@@ -33,22 +32,22 @@ export default async function MovieDetailPage({ params }: Props) {
   let rawMovie: any = null;
   try {
     rawMovie = await getMovieDetails(movieId);
-  } catch (err) {
+  } catch {
     rawMovie = null;
   }
 
   if (!rawMovie) {
     return (
-      <div className="min-h-screen bg-background py-16 text-white text-center">
+      <div className="min-h-screen bg-[#0B0F14] py-16 text-white text-center">
         <div className="container mx-auto px-4 max-w-md space-y-4">
-          <AlertCircle className="w-12 h-12 text-error mx-auto opacity-80" />
+          <AlertCircle className="w-12 h-12 text-red-400 mx-auto opacity-80" />
           <h1 className="text-2xl font-bold">Movie Not Found</h1>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-[#9AA8B7]">
             We could not find the requested movie details on TMDB.
           </p>
           <Link
             href="/films"
-            className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-black font-bold text-xs rounded-xl hover:bg-primary-hover transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#35D6A0] text-[#0B0F14] font-black text-xs rounded-xl hover:bg-[#6BE8BC] transition-colors"
           >
             <ArrowLeft size={14} /> Back to Movies
           </Link>
@@ -58,177 +57,190 @@ export default async function MovieDetailPage({ params }: Props) {
   }
 
   const movie = normalizeMovieDetails(rawMovie);
-  const backdropUrl = movie.backdropPath ? `https://image.tmdb.org/t/p/w1280${movie.backdropPath}` : null;
-  const posterUrl = movie.posterPath ? `https://image.tmdb.org/t/p/w500${movie.posterPath}` : null;
+  const backdropUrl = movie.backdropPath
+    ? `https://image.tmdb.org/t/p/w1280${movie.backdropPath}`
+    : null;
+  const posterUrl = movie.posterPath
+    ? `https://image.tmdb.org/t/p/w500${movie.posterPath}`
+    : null;
 
   const rawCast = rawMovie.credits?.cast || [];
   const rawCrew = rawMovie.credits?.crew || [];
   const watchProviders = rawMovie['watch/providers']?.results || {};
-  const trailerKey = rawMovie.videos?.results?.find((v: any) => v.type === 'Trailer' && v.site === 'YouTube')?.key || null;
+  const trailerKey =
+    rawMovie.videos?.results?.find(
+      (v: any) => v.type === 'Trailer' && v.site === 'YouTube'
+    )?.key || null;
 
   return (
-    <div className="min-h-screen bg-background text-text-secondary pb-24">
-      {/* Hero Backdrop */}
-      <div className="relative h-[55vh] min-h-[400px] w-full bg-surface overflow-hidden">
-        {backdropUrl && (
+    <div className="min-h-screen bg-[#0B0F14] text-[#9AA8B7] pb-24 selection:bg-[#35D6A0] selection:text-[#0B0F14]">
+      {/* ── Cinematic Hero Backdrop with Vignette ───────────── */}
+      <div className="relative h-[60vh] min-h-[420px] max-h-[600px] w-full bg-[#0B0F14] overflow-hidden">
+        {backdropUrl ? (
           <Image
             src={backdropUrl}
             alt={movie.title}
             fill
             priority
             sizes="100vw"
-            className="object-cover"
+            className="object-cover object-top filter brightness-[0.7] contrast-[1.05]"
             unoptimized
           />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-b from-[#131A22] via-[#0B0F14] to-[#0B0F14]" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        {/* Layered cinematic vignette and dark fades */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F14] via-[#0B0F14]/65 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F14]/90 via-transparent to-[#0B0F14]/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(11,15,20,0.85)_100%)] pointer-events-none" />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1600px] -mt-40 relative z-10 space-y-12">
-        {/* Main Header Info */}
-        <div className="flex flex-col md:flex-row gap-8 items-start">
-          {/* Poster */}
-          <div className="w-48 md:w-64 shrink-0 mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-border-subtle bg-surface aspect-[2/3] relative">
-            {posterUrl ? (
-              <Image
-                src={posterUrl}
-                alt={movie.title}
-                fill
-                sizes="(max-width: 768px) 192px, 256px"
-                className="object-cover"
-                priority
-                unoptimized
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-text-muted p-4 text-center">
-                No Poster Available
-              </div>
-            )}
+      {/* ── Main Container: Three-Column Composition ───────── */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1440px] -mt-72 sm:-mt-80 relative z-10 space-y-12">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          {/* ── COLUMN 1 (LEFT): Poster, Community Stats, Streaming ── */}
+          <div className="w-full sm:w-72 lg:w-[260px] xl:w-[280px] shrink-0 mx-auto lg:mx-0 space-y-4">
+            {/* Poster Card */}
+            <div className="relative aspect-[2/3] w-56 sm:w-full mx-auto rounded-2xl overflow-hidden shadow-2xl border border-[#273442] bg-[#131A22]">
+              {posterUrl ? (
+                <Image
+                  src={posterUrl}
+                  alt={movie.title}
+                  fill
+                  sizes="(max-width: 640px) 224px, (max-width: 1024px) 288px, 280px"
+                  className="object-cover"
+                  priority
+                  unoptimized
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[#9AA8B7] p-4 text-center text-xs">
+                  No Poster Available
+                </div>
+              )}
+            </div>
+
+            {/* Community Stats Bar */}
+            <MovieStatsBar
+              voteCount={movie.voteCount}
+              popularity={movie.popularity}
+            />
+
+            {/* Where to Watch / Streaming Section */}
+            <WhereToWatchCard
+              providers={watchProviders}
+              movieTitle={movie.title}
+              trailerKey={trailerKey}
+            />
           </div>
 
-          {/* Details Column */}
-          <div className="flex-1 pt-4 text-center md:text-left space-y-4">
-            <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
-                {movie.title}
-              </h1>
-              {movie.tagline && (
-                <p className="text-sm md:text-base text-accent-amber italic mt-1 font-medium">
-                  &ldquo;{movie.tagline}&rdquo;
+          {/* ── COLUMN 2 (CENTER): Title, Director, Synopsis, Tabs ── */}
+          <div className="flex-1 min-w-0 space-y-6 pt-1 w-full">
+            {/* Title & Metadata Header */}
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#F4F3EC] tracking-tight">
+                  {movie.title}
+                </h1>
+                {movie.releaseYear && (
+                  <Link
+                    href={`/films?year=${movie.releaseYear}`}
+                    className="text-2xl sm:text-3xl font-medium text-[#9AA8B7] hover:text-[#35D6A0] transition-colors"
+                  >
+                    {movie.releaseYear}
+                  </Link>
+                )}
+              </div>
+
+              {movie.director && (
+                <p className="text-sm sm:text-base text-[#9AA8B7]">
+                  Directed by{' '}
+                  <Link
+                    href={`/person/${movie.director.id}`}
+                    className="text-[#F4F3EC] hover:text-[#35D6A0] font-bold underline-offset-4 hover:underline transition-colors"
+                  >
+                    {movie.director.name}
+                  </Link>
                 </p>
               )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-              {movie.releaseYear && (
-                <span className="px-3 py-1 bg-surface border border-border-subtle text-white font-semibold text-xs rounded-full">
-                  {movie.releaseYear}
-                </span>
-              )}
-              {movie.genres.map((g) => (
-                <span key={g.id} className="px-3 py-1 bg-surface border border-border-subtle text-text-secondary text-xs rounded-full">
-                  {g.name}
-                </span>
-              ))}
-              {movie.runtime && (
-                <span className="px-3 py-1 bg-surface border border-border-subtle text-text-muted text-xs rounded-full flex items-center gap-1">
-                  <Clock size={12} /> {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m
-                </span>
-              )}
-              {movie.voteAverage > 0 && (
-                <span className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary font-bold text-xs rounded-full flex items-center gap-1">
-                  <Star size={12} className="fill-primary" /> {movie.voteAverage.toFixed(1)}
-                </span>
-              )}
-            </div>
+            {/* Tagline */}
+            {movie.tagline && (
+              <p className="text-xs sm:text-sm text-[#35D6A0] uppercase tracking-[0.14em] font-bold">
+                {movie.tagline}
+              </p>
+            )}
 
+            {/* Synopsis */}
             {movie.overview && (
-               <p className="text-sm md:text-base leading-relaxed text-text-muted max-w-3xl">
+              <p className="text-sm sm:text-base text-[#F4F3EC]/90 leading-relaxed font-normal max-w-3xl">
                 {movie.overview}
               </p>
             )}
 
+            {/* Part of Collection Banner */}
             {movie.belongsToCollection && (
-              <Link href={`/collections/tmdb/${movie.belongsToCollection.id}`} className="mt-6 block group">
-                <div className="relative overflow-hidden rounded-xl border border-border-subtle bg-surface hover:ring-1 hover:ring-primary transition-all">
-                  {movie.belongsToCollection.backdrop_path && (
-                    <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity">
-                      <Image
-                        src={`https://image.tmdb.org/t/p/w780${movie.belongsToCollection.backdrop_path}`}
-                        alt={movie.belongsToCollection.name}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
-                    </div>
-                  )}
-                  <div className="relative p-4 flex items-center gap-4">
-                    {movie.belongsToCollection.poster_path && (
-                      <div className="w-12 h-18 rounded shrink-0 overflow-hidden relative">
-                        <Image
-                          src={`https://image.tmdb.org/t/p/w185${movie.belongsToCollection.poster_path}`}
-                          alt={movie.belongsToCollection.name}
-                          width={48}
-                          height={72}
-                          className="object-cover"
-                          unoptimized
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-xs text-text-muted uppercase tracking-wider font-bold mb-1">Part of the</p>
-                      <p className="text-white font-bold group-hover:text-primary transition-colors">{movie.belongsToCollection.name}</p>
-                    </div>
+              <Link
+                href={`/collections/tmdb/${movie.belongsToCollection.id}`}
+                className="block group"
+              >
+                <div className="relative overflow-hidden rounded-xl border border-[#273442] bg-[#131A22] hover:border-[#35D6A0]/60 transition-all p-3.5 flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] text-[#9AA8B7] uppercase tracking-wider font-bold">
+                      Part of the
+                    </p>
+                    <p className="text-white font-bold text-sm group-hover:text-[#35D6A0] transition-colors truncate">
+                      {movie.belongsToCollection.name}
+                    </p>
                   </div>
                 </div>
               </Link>
             )}
+
+            {/* ── Information Tabs (CAST | CREW | DETAILS | GENRES | RELEASES) ── */}
+            <div className="pt-2">
+              <MovieInfoTabs
+                cast={rawCast}
+                crew={rawCrew}
+                movie={movie}
+                rawMovie={rawMovie}
+              />
+            </div>
           </div>
 
-          {/* Actions Column */}
-          <div className="w-full md:w-auto shrink-0 md:pl-8 pt-4 md:pt-0">
-            <MovieActions
+          {/* ── COLUMN 3 (RIGHT): Action Panel & Ratings Summary ── */}
+          <div className="w-full lg:w-[280px] xl:w-[320px] shrink-0 space-y-5 pt-1">
+            {/* Interactive Action Panel */}
+            <MovieActionPanel
               movieId={movie.id}
               movieTitle={movie.title}
               posterPath={movie.posterPath}
               releaseYear={movie.releaseYear}
-              trailerKey={trailerKey || undefined}
+            />
+
+            {/* Ratings & Statistics Card */}
+            <MovieRatingsCard
+              voteAverage={movie.voteAverage}
+              voteCount={movie.voteCount}
+              popularity={movie.popularity}
             />
           </div>
         </div>
 
-        {/* Cast Section */}
-        {rawCast.length > 0 && (
-          <CastSection cast={rawCast} director={movie.director} />
-        )}
+        {/* ── Community Reviews Section ──────────────────────── */}
+        <div className="pt-6 border-t border-[#273442]/60">
+          <ReviewsSection
+            tmdbId={movie.id}
+            title={movie.title}
+            posterPath={movie.posterPath}
+            mediaType="movie"
+          />
+        </div>
 
-        {/* Crew Section */}
-        {rawCrew.length > 0 && (
-          <CrewSection crew={rawCrew} />
-        )}
-
-        {/* Watch Providers Section */}
-        {Object.keys(watchProviders).length > 0 && (
-          <WatchProvidersSection providers={watchProviders} movieTitle={movie.title} />
-        )}
-
-        {/* Movie Details Breakdown */}
-        <MovieDetailsSection movie={movie} />
-
-        {/* Fans Section */}
-        <FansSection tmdbId={movie.id} />
-
-        {/* Reviews Section */}
-        <ReviewsSection 
-          tmdbId={movie.id} 
-          title={movie.title} 
-          posterPath={movie.posterPath} 
-          mediaType="movie" 
-        />
-
-        {/* Similar Films */}
-        <SimilarFilmsSection movieId={movie.id} />
+        {/* ── Similar Films Carousel ──────────────────────────── */}
+        <div className="pt-6 border-t border-[#273442]/60">
+          <SimilarFilmsSection movieId={movie.id} />
+        </div>
       </div>
     </div>
   );

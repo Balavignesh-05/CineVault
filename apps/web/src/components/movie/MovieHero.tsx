@@ -51,7 +51,7 @@ export function MovieHero({ movie }: MovieHeroProps) {
             <div className="flex flex-col gap-4">
               {movie.certification && (
                 <div className="self-start">
-                  <Badge variant="outline" className="border-[#3D3D55] text-muted-foreground bg-[var(--color-bg-surface)]/50 backdrop-blur">
+                  <Badge variant="outline" className="border-[#273442] text-muted-foreground bg-[var(--color-bg-surface)]/50 backdrop-blur">
                     {movie.certification}
                   </Badge>
                 </div>
@@ -72,13 +72,13 @@ export function MovieHero({ movie }: MovieHeroProps) {
                 {movie.releaseYear && <span>{movie.releaseYear}</span>}
                 {runtimeStr && (
                   <>
-                    <span className="w-1 h-1 rounded-full bg-[#3D3D55]" />
+                    <span className="w-1 h-1 rounded-full bg-[#273442]" />
                     <span>{runtimeStr}</span>
                   </>
                 )}
                 {movie.genres.length > 0 && (
                   <>
-                    <span className="w-1 h-1 rounded-full bg-[#3D3D55]" />
+                    <span className="w-1 h-1 rounded-full bg-[#273442]" />
                     <div className="flex flex-wrap gap-2">
                       {movie.genres.map(g => (
                         <span key={g.id} className="text-foreground">{g.name}</span>

@@ -52,20 +52,20 @@ export function SearchFilters({ genres, filters, onFilterChange, onReset }: Sear
   ].filter(Boolean).length;
 
   return (
-    <div className="w-full bg-[var(--color-bg-surface)] border border-[#3D3D55] rounded-xl p-4 md:p-6 space-y-6">
+    <div className="w-full bg-[#131A22] border border-[#273442] rounded-xl p-4 md:p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-foreground font-semibold">
-          <SlidersHorizontal className="w-5 h-5 text-[var(--color-accent-primary)]" />
+        <div className="flex items-center gap-2 text-[#F4F3EC] font-semibold">
+          <SlidersHorizontal className="w-5 h-5 text-[#35D6A0]" />
           <span>Filters</span>
           {activeCount > 0 && (
-            <Badge variant="secondary" className="ml-2 bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary)]/90">
+            <Badge variant="secondary" className="ml-2 bg-[#35D6A0] text-[#0B0F14] font-bold hover:bg-[#6BE8BC]">
               {activeCount}
             </Badge>
           )}
         </div>
         
         {activeCount > 0 && (
-          <Button variant="ghost" size="sm" onClick={onReset} className="h-8 text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="sm" onClick={onReset} className="h-8 text-[#9AA8B7] hover:text-[#F4F3EC] hover:bg-[#1A2430]">
             <X className="w-4 h-4 mr-1" />
             Reset
           </Button>
@@ -74,36 +74,36 @@ export function SearchFilters({ genres, filters, onFilterChange, onReset }: Sear
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="space-y-2">
-          <label className="text-sm text-muted-foreground font-medium">Sort By</label>
+          <label className="text-sm text-[#9AA8B7] font-medium">Sort By</label>
           <Select value={filters.sortBy} onValueChange={(val) => onFilterChange('sortBy', val)}>
-            <SelectTrigger className="bg-[var(--color-bg-base)] border-[#3D3D55]">
+            <SelectTrigger className="bg-[#0B0F14] border-[#273442] focus:ring-[#35D6A0] text-[#F4F3EC]">
               <SelectValue placeholder="Sort By" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-[#131A22] border-[#273442] text-[#F4F3EC]">
               {SORT_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                <SelectItem key={opt.value} value={opt.value} className="focus:bg-[#1A2430] focus:text-[#35D6A0]">{opt.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-muted-foreground font-medium">Genre</label>
+          <label className="text-sm text-[#9AA8B7] font-medium">Genre</label>
           <Select value={filters.genre?.toString() || ''} onValueChange={(val) => onFilterChange('genre', parseInt(val))}>
-            <SelectTrigger className="bg-[var(--color-bg-base)] border-[#3D3D55]">
+            <SelectTrigger className="bg-[#0B0F14] border-[#273442] focus:ring-[#35D6A0] text-[#F4F3EC]">
               <SelectValue placeholder="All Genres" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">All Genres</SelectItem>
+            <SelectContent className="bg-[#131A22] border-[#273442] text-[#F4F3EC]">
+              <SelectItem value="" className="focus:bg-[#1A2430] focus:text-[#35D6A0]">All Genres</SelectItem>
               {genres.map((g) => (
-                <SelectItem key={g.id} value={g.id.toString()}>{g.name}</SelectItem>
+                <SelectItem key={g.id} value={g.id.toString()} className="focus:bg-[#1A2430] focus:text-[#35D6A0]">{g.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-muted-foreground font-medium">Release Year</label>
+          <label className="text-sm text-[#9AA8B7] font-medium">Release Year</label>
           <Input 
             type="number" 
             min="1900" 
@@ -111,20 +111,20 @@ export function SearchFilters({ genres, filters, onFilterChange, onReset }: Sear
             placeholder="e.g. 2023"
             value={filters.year || ''}
             onChange={(e) => onFilterChange('year', e.target.value ? parseInt(e.target.value) : undefined)}
-            className="bg-[var(--color-bg-base)] border-[#3D3D55]"
+            className="bg-[#0B0F14] border-[#273442] focus:ring-[#35D6A0] text-[#F4F3EC]"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-muted-foreground font-medium">Language</label>
+          <label className="text-sm text-[#9AA8B7] font-medium">Language</label>
           <Select value={filters.language || ''} onValueChange={(val) => onFilterChange('language', val)}>
-            <SelectTrigger className="bg-[var(--color-bg-base)] border-[#3D3D55]">
+            <SelectTrigger className="bg-[#0B0F14] border-[#273442] focus:ring-[#35D6A0] text-[#F4F3EC]">
               <SelectValue placeholder="Any Language" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Any Language</SelectItem>
+            <SelectContent className="bg-[#131A22] border-[#273442] text-[#F4F3EC]">
+              <SelectItem value="" className="focus:bg-[#1A2430] focus:text-[#35D6A0]">Any Language</SelectItem>
               {LANGUAGES.map((lang) => (
-                <SelectItem key={lang.code} value={lang.code}>{lang.name}</SelectItem>
+                <SelectItem key={lang.code} value={lang.code} className="focus:bg-[#1A2430] focus:text-[#35D6A0]">{lang.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -132,8 +132,8 @@ export function SearchFilters({ genres, filters, onFilterChange, onReset }: Sear
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <label className="text-sm text-muted-foreground font-medium">Min Rating</label>
-            <span className="text-sm text-foreground">{filters.ratingMin || 0}+</span>
+            <label className="text-sm text-[#9AA8B7] font-medium">Min Rating</label>
+            <span className="text-sm text-[#F4F3EC]">{filters.ratingMin || 0}+</span>
           </div>
           <Slider
             min={0}
@@ -141,7 +141,7 @@ export function SearchFilters({ genres, filters, onFilterChange, onReset }: Sear
             step={1}
             value={[filters.ratingMin || 0]}
             onValueChange={([val]) => onFilterChange('ratingMin', val)}
-            className="[&_[role=slider]]:bg-[var(--color-accent-primary)] [&_[role=slider]]:border-[var(--color-accent-primary)] [&_.bg-primary]:bg-[var(--color-accent-primary)]"
+            className="[&_[role=slider]]:bg-[#35D6A0] [&_[role=slider]]:border-[#35D6A0] [&_.bg-primary]:bg-[#35D6A0]"
           />
         </div>
       </div>

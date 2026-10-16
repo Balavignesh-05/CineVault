@@ -31,9 +31,9 @@ export function MediaSection({ images, trailer }: MediaSectionProps) {
       </div>
 
       <Tabs defaultValue={hasBackdrops ? 'backdrops' : 'posters'} className="w-full">
-        <TabsList className="bg-[var(--color-bg-surface)] border border-[#3D3D55] mb-6">
-          {hasBackdrops && <TabsTrigger value="backdrops">Backdrops ({images.backdrops.length})</TabsTrigger>}
-          {hasPosters && <TabsTrigger value="posters">Posters ({images.posters.length})</TabsTrigger>}
+        <TabsList className="bg-[#131A22] border border-[#273442] mb-6">
+          {hasBackdrops && <TabsTrigger value="backdrops" className="data-[state=active]:bg-[#1A2430] data-[state=active]:text-[#35D6A0]">Backdrops ({images.backdrops.length})</TabsTrigger>}
+          {hasPosters && <TabsTrigger value="posters" className="data-[state=active]:bg-[#1A2430] data-[state=active]:text-[#35D6A0]">Posters ({images.posters.length})</TabsTrigger>}
         </TabsList>
         
         {hasBackdrops && (
@@ -43,7 +43,7 @@ export function MediaSection({ images, trailer }: MediaSectionProps) {
                 {images.backdrops.slice(0, 15).map((image, i) => (
                   <div 
                     key={i} 
-                    className="relative w-[300px] sm:w-[400px] aspect-video rounded-xl overflow-hidden cursor-pointer group"
+                    className="relative w-[300px] sm:w-[400px] aspect-video rounded-xl overflow-hidden cursor-pointer group border border-[#273442]/60 hover:border-[#35D6A0]/40 transition-colors"
                     onClick={() => setSelectedImage(`https://image.tmdb.org/t/p/original${image.file_path}`)}
                   >
                     <Image
@@ -56,7 +56,7 @@ export function MediaSection({ images, trailer }: MediaSectionProps) {
                   </div>
                 ))}
               </div>
-              <ScrollBar orientation="horizontal" className="bg-[#3D3D55]/30 hover:bg-[#3D3D55]" />
+              <ScrollBar orientation="horizontal" className="bg-[#273442]/40 hover:bg-[#273442]" />
             </ScrollArea>
           </TabsContent>
         )}
@@ -68,7 +68,7 @@ export function MediaSection({ images, trailer }: MediaSectionProps) {
                 {images.posters.slice(0, 15).map((image, i) => (
                   <div 
                     key={i} 
-                    className="relative w-[150px] sm:w-[200px] aspect-[2/3] rounded-xl overflow-hidden cursor-pointer group"
+                    className="relative w-[150px] sm:w-[200px] aspect-[2/3] rounded-xl overflow-hidden cursor-pointer group border border-[#273442]/60 hover:border-[#35D6A0]/40 transition-colors"
                     onClick={() => setSelectedImage(`https://image.tmdb.org/t/p/original${image.file_path}`)}
                   >
                     <Image
@@ -81,7 +81,7 @@ export function MediaSection({ images, trailer }: MediaSectionProps) {
                   </div>
                 ))}
               </div>
-              <ScrollBar orientation="horizontal" className="bg-[#3D3D55]/30 hover:bg-[#3D3D55]" />
+              <ScrollBar orientation="horizontal" className="bg-[#273442]/40 hover:bg-[#273442]" />
             </ScrollArea>
           </TabsContent>
         )}

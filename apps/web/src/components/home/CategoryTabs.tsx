@@ -27,11 +27,11 @@ export function CategoryTabs({ activeTab = 'For You' }: CategoryTabsProps) {
                 href={tab.href}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-tight transition-all shrink-0 border ${
                   isActive
-                    ? 'bg-primary text-black border-primary shadow-[0_0_15px_rgba(0,224,84,0.3)]'
-                    : 'bg-surface/80 hover:bg-surface border-white/[0.08] text-white/80 hover:text-white hover:border-white/20'
+                    ? 'bg-[#35D6A0] text-[#0B0F14] border-[#35D6A0] shadow-[0_0_16px_rgba(53,214,160,0.25)] font-black'
+                    : 'bg-[#131A22] hover:bg-[#1A2430] border-[#273442] text-[#9AA8B7] hover:text-[#F4F3EC] hover:border-[#3B4D61]'
                 }`}
               >
-                <Icon size={14} className={isActive ? 'text-black' : 'text-primary'} />
+                <Icon size={14} className={isActive ? 'text-[#0B0F14]' : 'text-[#35D6A0]'} />
                 {tab.name}
               </Link>
             );

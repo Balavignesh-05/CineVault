@@ -71,7 +71,7 @@ export function SeriesActions({ seriesId, seriesTitle, posterPath, firstAirYear 
       <div className="flex flex-col gap-3 w-full sm:min-w-[240px]">
         <div className="grid grid-cols-4 gap-2">
           {/* Watchlist */}
-          <div className="h-14 [&>button]:h-full [&>button]:w-full [&>button]:bg-[#14171B]/80 [&>button]:backdrop-blur [&>button]:border-border-subtle hover:[&>button]:bg-elevated flex items-stretch">
+          <div className="h-14 [&>button]:h-full [&>button]:w-full [&>button]:bg-[#131A22] [&>button]:border-[#273442] hover:[&>button]:bg-[#1A2430] hover:[&>button]:border-[#35D6A0]/40 flex items-stretch rounded-xl overflow-hidden">
             <AddToWatchlistButton 
               tmdbId={seriesId} 
               filmTitle={seriesTitle} 
@@ -84,13 +84,13 @@ export function SeriesActions({ seriesId, seriesTitle, posterPath, firstAirYear 
           {/* Log / Watched */}
           <Button 
             variant="outline" 
-            className={`h-14 border-border-subtle bg-[#14171B]/80 backdrop-blur hover:bg-elevated transition-all flex flex-col items-center justify-center gap-1 ${isFavorite ? 'text-success border-success/50' : 'text-foreground'}`}
+            className={`h-14 border-[#273442] bg-[#131A22] hover:bg-[#1A2430] hover:border-[#35D6A0]/40 transition-colors flex flex-col items-center justify-center gap-1 ${isFavorite ? 'text-[#35D6A0] border-[#35D6A0]/40 bg-[#35D6A0]/10' : 'text-[#F4F3EC]'}`}
             onClick={() => {
               if (!isAuthenticated) return router.push('/signin');
               toggleFavorite.mutate();
             }}
           >
-            <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+            <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : 'text-[#9AA8B7]'}`} />
             <span className="text-[10px] uppercase font-bold tracking-wider">{isFavorite ? 'Watched' : 'Log'}</span>
           </Button>
           
@@ -98,7 +98,7 @@ export function SeriesActions({ seriesId, seriesTitle, posterPath, firstAirYear 
           <CompactRatingPopover movieId={seriesId} movieTitle={seriesTitle} mediaType="tv">
             <Button 
               variant="outline" 
-              className="h-14 border-border-subtle bg-[#14171B]/80 backdrop-blur hover:bg-elevated text-foreground w-full flex flex-col items-center justify-center gap-1"
+              className="h-14 border-[#273442] bg-[#131A22] hover:bg-[#1A2430] hover:border-[#35D6A0]/40 text-[#F4F3EC] w-full flex flex-col items-center justify-center gap-1 transition-colors"
               onClick={(e) => {
                 if (!isAuthenticated) {
                   e.preventDefault();
@@ -106,7 +106,7 @@ export function SeriesActions({ seriesId, seriesTitle, posterPath, firstAirYear 
                 }
               }}
             >
-              <Star className={`w-5 h-5 ${ratingData?.data?.rating ? 'fill-[#ff8000] text-accent-amber' : ''}`} />
+              <Star className={`w-5 h-5 ${ratingData?.data?.rating ? 'fill-[#35D6A0] text-[#35D6A0]' : 'text-[#9AA8B7]'}`} />
               <span className="text-[10px] uppercase font-bold tracking-wider">{ratingData?.data?.rating ? `${(ratingData.data.rating / 2).toFixed(1)}★` : 'Rate'}</span>
             </Button>
           </CompactRatingPopover>
@@ -114,13 +114,13 @@ export function SeriesActions({ seriesId, seriesTitle, posterPath, firstAirYear 
           {/* Review */}
           <Button 
             variant="outline" 
-            className="h-14 border-border-subtle bg-[#14171B]/80 backdrop-blur hover:bg-elevated text-foreground flex flex-col items-center justify-center gap-1 text-white hover:text-white"
+            className="h-14 border-[#273442] bg-[#131A22] hover:bg-[#1A2430] hover:border-[#35D6A0]/40 text-[#F4F3EC] flex flex-col items-center justify-center gap-1 transition-colors"
             onClick={() => {
               if (!isAuthenticated) return router.push('/signin');
               setIsDiaryOpen(true);
             }}
           >
-            <PenSquare className="w-5 h-5" />
+            <PenSquare className="w-5 h-5 text-[#9AA8B7]" />
             <span className="text-[10px] uppercase font-bold tracking-wider">Review</span>
           </Button>
         </div>
@@ -129,17 +129,17 @@ export function SeriesActions({ seriesId, seriesTitle, posterPath, firstAirYear 
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              className="w-full text-text-muted hover:text-white h-12"
+              className="w-full text-[#9AA8B7] hover:text-[#F4F3EC] hover:bg-[#131A22] border border-[#273442] h-12 rounded-xl transition-colors"
               aria-label="Share options"
             >
               <Share2 className="w-4 h-4 mr-2" />
               Share
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 bg-elevated border-[#3D3D55] text-white">
+          <DropdownMenuContent align="end" className="w-48 bg-[#131A22] border-[#273442] text-[#F4F3EC]">
             <DropdownMenuItem 
               onClick={handleShare}
-              className="cursor-pointer hover:bg-surface focus:bg-surface"
+              className="cursor-pointer hover:bg-[#1A2430] focus:bg-[#1A2430] hover:text-[#35D6A0] focus:text-[#35D6A0]"
             >
               Copy Link
             </DropdownMenuItem>

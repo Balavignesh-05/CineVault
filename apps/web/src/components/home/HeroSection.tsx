@@ -21,17 +21,33 @@ const genreMap: Record<number, string> = {
 };
 
 export function HeroSection({ movies }: HeroSectionProps) {
+  const [clientMovies, setClientMovies] = useState<any[]>(movies || []);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (movies.length <= 1) return;
+    if (movies && movies.length > 0) {
+      setClientMovies(movies);
+    } else {
+      fetch('/api/tmdb/trending?timeWindow=week')
+        .then(r => r.json())
+        .then(data => {
+          if (data?.results?.length > 0) {
+            setClientMovies(data.results.slice(0, 5));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [movies]);
+
+  useEffect(() => {
+    if (clientMovies.length <= 1) return;
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % movies.length);
+      setCurrentIndex((prev) => (prev + 1) % clientMovies.length);
     }, 7000);
     return () => clearInterval(interval);
-  }, [movies.length]);
+  }, [clientMovies.length]);
 
-  if (!movies || movies.length === 0 || !movies[currentIndex]) {
+  if (!clientMovies || clientMovies.length === 0 || !clientMovies[currentIndex]) {
     return (
       <section className="relative w-full h-[360px] overflow-hidden flex items-center justify-center bg-[#0b0e14] text-center px-4">
         <div className="space-y-3 max-w-xl">
@@ -49,7 +65,7 @@ export function HeroSection({ movies }: HeroSectionProps) {
     );
   }
 
-  const activeMovie = movies[currentIndex] || movies[0];
+  const activeMovie = clientMovies[currentIndex] || clientMovies[0];
 
   // Defensively extract data supporting both camelCase and snake_case TMDB objects
   const backdrop = activeMovie.backdropPath || activeMovie.backdrop_path || null;
@@ -199,9 +215,9 @@ export function HeroSection({ movies }: HeroSectionProps) {
       </div>
 
       {/* Progress Indicators at Bottom Right */}
-      {movies.length > 1 && (
+      {clientMovies.length > 1 && (
         <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-8 z-20 flex items-center gap-1.5">
-          {movies.map((_, idx) => (
+          {clientMovies.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}

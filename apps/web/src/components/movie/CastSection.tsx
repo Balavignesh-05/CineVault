@@ -23,7 +23,7 @@ export function CastSection({ cast }: CastSectionProps) {
         <div className="flex w-max space-x-4">
           {topCast.map((member) => (
             <Link href={`/person/${member.id}`} key={member.id} className="w-[140px] flex flex-col group cursor-pointer">
-              <div className="relative w-full aspect-[2/3] rounded-xl overflow-hidden bg-[var(--color-bg-surface)] border border-[#3D3D55] mb-3 transition-transform group-hover:scale-105">
+              <div className="relative w-full aspect-[2/3] rounded-xl overflow-hidden bg-[var(--color-bg-surface)] border border-[#273442] mb-3 transition-transform group-hover:scale-105">
                 {member.profile_path ? (
                   <Image
                     src={`https://image.tmdb.org/t/p/w185${member.profile_path}`}
@@ -48,7 +48,7 @@ export function CastSection({ cast }: CastSectionProps) {
             </Link>
           ))}
         </div>
-        <ScrollBar orientation="horizontal" className="bg-[#3D3D55]/30 hover:bg-[#3D3D55]" />
+        <ScrollBar orientation="horizontal" className="bg-[#273442]/40 hover:bg-[#273442]" />
       </ScrollArea>
     </section>
   );
