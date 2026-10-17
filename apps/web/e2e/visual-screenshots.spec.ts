@@ -44,10 +44,23 @@ test.describe('Automated Visual Testing & Screenshots', () => {
     await page.waitForTimeout(500);
     await page.screenshot({ path: path.join(screenshotsDir, 'desktop-movie-detail.png'), fullPage: false });
 
-    // 7. Login desktop
+    // 7. Login desktop 1440x900
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/signin', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
+    await page.screenshot({ path: path.join(screenshotsDir, 'desktop-1440-signin.png'), fullPage: false });
     await page.screenshot({ path: path.join(screenshotsDir, 'desktop-login.png'), fullPage: false });
+
+    // 8. Signup desktop 1440x900
+    await page.goto('/signup', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1000);
+    await page.screenshot({ path: path.join(screenshotsDir, 'desktop-1440-signup.png'), fullPage: false });
+
+    // 9. Short desktop viewport 1280x720
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto('/signin', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1000);
+    await page.screenshot({ path: path.join(screenshotsDir, 'desktop-1280x720-signin.png'), fullPage: false });
   });
 
   test('Capture Mobile Visual Screenshots', async ({ page }, testInfo) => {
@@ -68,9 +81,16 @@ test.describe('Automated Visual Testing & Screenshots', () => {
     await page.waitForTimeout(500);
     await page.screenshot({ path: path.join(screenshotsDir, 'mobile-discover.png'), fullPage: false });
 
-    // 4. Login mobile
+    // 4. Login mobile 390x844
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/signin', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
+    await page.screenshot({ path: path.join(screenshotsDir, 'mobile-390-signin.png'), fullPage: false });
     await page.screenshot({ path: path.join(screenshotsDir, 'mobile-login.png'), fullPage: false });
+
+    // 5. Signup mobile 390x844
+    await page.goto('/signup', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1000);
+    await page.screenshot({ path: path.join(screenshotsDir, 'mobile-390-signup.png'), fullPage: false });
   });
 });
