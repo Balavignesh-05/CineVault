@@ -8,6 +8,7 @@ import { redis } from '../config/redis';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { AppError, AuthError, ConflictError, NotFoundError, ValidationError } from '../utils/errors';
 import { authRateLimiter } from '../middleware/rateLimiter';
+import passwordResetRouter from './password-reset';
 
 const router: Router = Router();
 
@@ -247,5 +248,8 @@ router.get('/me', authenticate, async (req: AuthRequest, res, next) => {
     next(err);
   }
 });
+
+// Password reset routes (/forgot-password, /validate-reset-token, /reset-password)
+router.use('/', passwordResetRouter);
 
 export default router;

@@ -73,6 +73,7 @@ model User {
   likedSeries  LikedSeries[]
   watchlistSeries WatchlistSeries[]
   customPosters CustomPoster[]
+  passwordResetTokens PasswordResetToken[]
 
   @@map("users")
 }
@@ -663,5 +664,19 @@ model CustomPoster {
 
   @@unique([userId, tmdbId])
   @@map("custom_posters")
+}
+
+model PasswordResetToken {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique @map("token_hash") @db.VarChar(128)
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([tokenHash])
+  @@index([userId])
+  @@map("password_reset_tokens")
 }
 

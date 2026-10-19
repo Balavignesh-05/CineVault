@@ -42,52 +42,82 @@ export class ApiClient {
       if (qs) url = `${url}${url.includes('?') ? '&' : '?'}${qs}`;
     }
 
-    const response = await fetch(url, {
-      ...init,
-      headers,
-      credentials: 'include', // for refresh token cookie
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15_000);
+    try {
+      const response = await fetch(url, {
+        ...init,
+        headers,
+        credentials: 'include', // for refresh token cookie
+        signal: controller.signal,
+      });
 
-    // Try to refresh if 401
-    if (response.status === 401 && !skipAuth && !path.includes('/auth/')) {
-      const refreshed = await this.refreshToken();
-      if (refreshed) {
-        // Retry with new cookie
-        const retryResponse = await fetch(url, {
-          ...init,
-          headers,
-          credentials: 'include',
-        });
-        if (!retryResponse.ok) {
-          const error = await retryResponse.json().catch(() => ({}));
-          throw new ApiError(retryResponse.status, error?.error?.message ?? 'Request failed', error?.error?.code);
+      // Try to refresh if 401
+      if (response.status === 401 && !skipAuth && !path.includes('/auth/')) {
+        const refreshed = await this.refreshToken();
+        if (refreshed) {
+          // Retry with new cookie and dedicated timeout
+          const retryController = new AbortController();
+          const retryTimeoutId = setTimeout(() => retryController.abort(), 15_000);
+          try {
+            const retryResponse = await fetch(url, {
+              ...init,
+              headers,
+              credentials: 'include',
+              signal: retryController.signal,
+            });
+            if (!retryResponse.ok) {
+              const error = await retryResponse.json().catch(() => ({}));
+              let errorMessage = error?.error?.message ?? 'Request failed';
+              if (retryResponse.status >= 500) {
+                errorMessage = 'Service is currently unavailable. Please try again.';
+              }
+              throw new ApiError(retryResponse.status, errorMessage, error?.error?.code);
+            }
+            if (retryResponse.status === 204) return {} as T;
+            return retryResponse.json() as Promise<T>;
+          } finally {
+            clearTimeout(retryTimeoutId);
+          }
         }
-        return retryResponse.json() as Promise<T>;
       }
-    }
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      let errorMessage = error?.error?.message ?? 'Request failed';
-      if (response.status >= 500) {
-        errorMessage = 'Service is currently unavailable. Please try again.';
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        let errorMessage = error?.error?.message ?? 'Request failed';
+        if (response.status >= 500) {
+          errorMessage = 'Service is currently unavailable. Please try again.';
+        }
+        throw new ApiError(response.status, errorMessage, error?.error?.code);
       }
-      throw new ApiError(response.status, errorMessage, error?.error?.code);
-    }
 
-    if (response.status === 204) return {} as T;
-    return response.json() as Promise<T>;
+      if (response.status === 204) return {} as T;
+      return response.json() as Promise<T>;
+    } catch (err) {
+      if ((err instanceof DOMException && err.name === 'AbortError') || (err instanceof Error && err.name === 'AbortError')) {
+        throw new ApiError(0, 'Request timed out. Please check your connection and try again.', 'TIMEOUT');
+      }
+      if (err instanceof ApiError) throw err;
+      throw new ApiError(0, 'Network error. Please check your connection.', 'NETWORK_ERROR');
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   private async refreshToken(): Promise<boolean> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15_000);
     try {
       const response = await fetch(`${this.baseUrl}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
+        signal: controller.signal,
       });
       return response.ok;
     } catch {
       return false;
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 

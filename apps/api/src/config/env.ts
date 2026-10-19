@@ -15,6 +15,8 @@ const envSchema = z.object({
   TMDB_IMAGE_BASE_URL: z.string().url().default('https://image.tmdb.org/t/p'),
   APP_URL: z.string().url().default('http://localhost:3000'),
   API_URL: z.string().url().default('http://localhost:4000'),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().default('CineVault <noreply@cinevault.app>'),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -44,6 +46,10 @@ export const config = {
     imageBaseUrl: env.TMDB_IMAGE_BASE_URL,
   },
   geminiApiKey: env.GEMINI_API_KEY,
+  email: {
+    resendApiKey: env.RESEND_API_KEY,
+    from: env.EMAIL_FROM,
+  },
   appUrl: env.APP_URL,
   apiUrl: env.API_URL,
 } as const;

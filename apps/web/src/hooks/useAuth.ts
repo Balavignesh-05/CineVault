@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/auth';
 import { getMe } from '../lib/api/auth';
+import { ApiError } from '../lib/api/client';
 
 export function useAuth() {
   const { user, setUser, setLoading, logout } = useAuthStore();
@@ -11,7 +12,8 @@ export function useAuth() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['auth', 'me'],
     queryFn: getMe,
-    retry: false,
+    retry: 1,
+    retryDelay: 1000,
     staleTime: 5 * 60 * 1000,
   });
 
@@ -20,7 +22,13 @@ export function useAuth() {
   }, [data, setUser]);
 
   useEffect(() => {
-    if (error) logout();
+    if (error) {
+      // Only logout on auth errors (401/403), not network errors
+      const isAuthError =
+        error instanceof ApiError &&
+        (error.status === 401 || error.status === 403);
+      if (isAuthError) logout();
+    }
   }, [error, logout]);
 
   useEffect(() => {

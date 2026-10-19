@@ -41,3 +41,16 @@ export const aiRateLimiter = rateLimit({
     });
   },
 });
+
+// Password reset limit: 3 requests per 15 minutes
+export const passwordResetRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 3,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: (req, res, next, options) => {
+    res.status(429).json({
+      error: { code: 'TOO_MANY_REQUESTS', message: 'Too many password reset requests. Please try again later.' }
+    });
+  },
+});
