@@ -6,30 +6,13 @@ import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2, UserPlus, User, AtSign, Mail, Lock } from 'lucide-react';
 import { register } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/auth';
+import { useGoogleAuth } from '@/hooks/useGoogleAuth';
 import { cn } from '@/lib/utils';
-
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-
-function getGoogleOAuthUrl() {
-  if (!GOOGLE_CLIENT_ID) return null;
-  const redirectUri = `${window.location.origin}/auth/google/callback`;
-  const state = crypto.randomUUID();
-  sessionStorage.setItem('google_oauth_state', state);
-  const params = new URLSearchParams({
-    client_id: GOOGLE_CLIENT_ID,
-    redirect_uri: redirectUri,
-    response_type: 'code',
-    scope: 'openid email profile',
-    access_type: 'offline',
-    prompt: 'consent',
-    state,
-  });
-  return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-}
 
 export default function SignUpPage() {
   const router = useRouter();
   const setUser = useAuthStore((s) => s.setUser);
+  const { isConfigured, isChecking, initiateGoogleLogin } = useGoogleAuth();
   const [form, setForm] = useState({ username: '', email: '', password: '', displayName: '' });
   const [showPw, setShowPw] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,11 +37,9 @@ export default function SignUpPage() {
   };
 
   const handleGoogleLogin = () => {
-    const url = getGoogleOAuthUrl();
-    if (url) {
-      window.location.href = url;
-    } else {
-      setError('Google Sign-In is not configured yet. Please set NEXT_PUBLIC_GOOGLE_CLIENT_ID in Vercel settings.');
+    const result = initiateGoogleLogin();
+    if (!result.success && result.error) {
+      setError(result.error);
     }
   };
 
@@ -220,40 +201,44 @@ export default function SignUpPage() {
         <button
           type="button"
           onClick={handleGoogleLogin}
-          disabled={!GOOGLE_CLIENT_ID}
+          disabled={!isConfigured || isChecking}
           aria-label="Continue with Google"
-          title={!GOOGLE_CLIENT_ID ? 'Google Sign-In configuration required' : 'Continue with Google'}
+          title={!isConfigured ? 'Google Sign-In configuration required' : 'Continue with Google'}
           className={cn(
             'w-full h-11 rounded-xl bg-[#0B0F14] border border-[#273442] flex items-center justify-center gap-3 transition-all text-sm font-medium text-[#F4F3EC] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#35D6A0]',
-            GOOGLE_CLIENT_ID
+            isConfigured && !isChecking
               ? 'hover:border-[#9AA8B7]/50 hover:bg-[#131A22] cursor-pointer'
               : 'opacity-50 cursor-not-allowed',
           )}
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24">
-            <path
-              fill="#EA4335"
-              d="M12 5c1.56 0 2.96.54 4.07 1.43l3.05-3.05C17.26 1.7 14.8 1 12 1 7.42 1 3.51 3.6 1.63 7.37l3.71 2.88C6.22 7.32 8.87 5 12 5z"
-            />
-            <path
-              fill="#4285F4"
-              d="M23.49 12.27c0-.82-.07-1.61-.21-2.27H12v4.51h6.47c-.28 1.48-1.12 2.74-2.38 3.59l3.7 2.87c2.16-1.99 3.7-4.93 3.7-8.7z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.34 14.75c-.23-.68-.36-1.41-.36-2.16s.13-1.48.36-2.16L1.63 7.55C.59 9.63 0 11.96 0 14.41s.59 4.78 1.63 6.86l3.71-2.88z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 23c3.24 0 5.95-1.08 7.93-2.91l-3.7-2.87c-1.07.72-2.45 1.16-4.23 1.16-3.13 0-5.78-2.32-6.66-5.25L1.63 16.01C3.51 19.78 7.42 22.38 12 22.38z"
-            />
-          </svg>
-          <span>Continue with Google</span>
+          {isChecking ? (
+            <Loader2 size={16} className="animate-spin text-[#9AA8B7]" />
+          ) : (
+            <svg className="w-4 h-4" viewBox="0 0 24 24">
+              <path
+                fill="#EA4335"
+                d="M12 5c1.56 0 2.96.54 4.07 1.43l3.05-3.05C17.26 1.7 14.8 1 12 1 7.42 1 3.51 3.6 1.63 7.37l3.71 2.88C6.22 7.32 8.87 5 12 5z"
+              />
+              <path
+                fill="#4285F4"
+                d="M23.49 12.27c0-.82-.07-1.61-.21-2.27H12v4.51h6.47c-.28 1.48-1.12 2.74-2.38 3.59l3.7 2.87c2.16-1.99 3.7-4.93 3.7-8.7z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.34 14.75c-.23-.68-.36-1.41-.36-2.16s.13-1.48.36-2.16L1.63 7.55C.59 9.63 0 11.96 0 14.41s.59 4.78 1.63 6.86l3.71-2.88z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c3.24 0 5.95-1.08 7.93-2.91l-3.7-2.87c-1.07.72-2.45 1.16-4.23 1.16-3.13 0-5.78-2.32-6.66-5.25L1.63 16.01C3.51 19.78 7.42 22.38 12 22.38z"
+              />
+            </svg>
+          )}
+          <span>{isChecking ? 'Checking configuration...' : 'Continue with Google'}</span>
         </button>
 
-        {!GOOGLE_CLIENT_ID && (
+        {!isConfigured && !isChecking && (
           <p className="text-[11px] text-[#9AA8B7]/70 text-center">
-            Google Sign-In is unavailable until configured in Vercel (<code className="text-[10px] text-amber-400/90 font-mono">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code>)
+            Google Sign-In is unavailable until configured in Vercel (<code className="text-[10px] text-amber-400/90 font-mono">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code>) or Render (<code className="text-[10px] text-amber-400/90 font-mono">GOOGLE_CLIENT_ID</code>)
           </p>
         )}
       </div>

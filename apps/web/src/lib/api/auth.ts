@@ -54,6 +54,18 @@ export async function resetPassword(token: string, password: string) {
   return res.data;
 }
 
+export async function getGoogleAuthConfig(): Promise<{ configured: boolean; clientId: string | null }> {
+  try {
+    const res = await api.get<ApiResponse<{ configured: boolean; clientId: string | null }>>(
+      '/auth/google/config',
+      { skipAuth: true },
+    );
+    return res.data;
+  } catch {
+    return { configured: false, clientId: null };
+  }
+}
+
 export async function googleLogin(code: string, redirectUri: string) {
   const res = await api.post<ApiResponse<{ user: User; expiresIn: number }>>(
     '/auth/google',

@@ -43,6 +43,19 @@ const googleLoginSchema = z.object({
     }),
 });
 
+// GET /api/v1/auth/google/config
+// Public endpoint returning whether Google OAuth is configured and the public Client ID.
+// Note: Never expose clientSecret or other credentials.
+router.get('/google/config', (_req: Request, res: Response) => {
+  const isConfigured = Boolean(config.google.clientId && config.google.clientSecret);
+  res.json({
+    data: {
+      configured: isConfigured,
+      clientId: isConfigured ? config.google.clientId : null,
+    },
+  });
+});
+
 // POST /api/v1/auth/google
 router.post(
   '/google',

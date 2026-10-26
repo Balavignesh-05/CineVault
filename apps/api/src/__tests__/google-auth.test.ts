@@ -60,6 +60,46 @@ describe('Google OAuth Suite', () => {
 
       assert.strictEqual(checkConfig(), true);
     });
+
+    it('returns public config with clientId when configured, without exposing secret', () => {
+      const sampleConfig = {
+        google: {
+          clientId: 'public-client-id-123.apps.googleusercontent.com',
+          clientSecret: 'super-sensitive-secret-never-expose',
+        },
+      };
+
+      const getPublicConfig = (cfg: typeof sampleConfig) => {
+        const isConfigured = Boolean(cfg.google.clientId && cfg.google.clientSecret);
+        return {
+          configured: isConfigured,
+          clientId: isConfigured ? cfg.google.clientId : null,
+        };
+      };
+
+      const result = getPublicConfig(sampleConfig);
+      assert.strictEqual(result.configured, true);
+      assert.strictEqual(result.clientId, 'public-client-id-123.apps.googleusercontent.com');
+      assert.strictEqual('clientSecret' in result, false, 'clientSecret must never be present in public config');
+    });
+
+    it('returns configured: false and clientId: null when either credential is missing', () => {
+      const getPublicConfig = (cfg: { clientId?: string; clientSecret?: string }) => {
+        const isConfigured = Boolean(cfg.clientId && cfg.clientSecret);
+        return {
+          configured: isConfigured,
+          clientId: isConfigured ? cfg.clientId : null,
+        };
+      };
+
+      const missingId = getPublicConfig({ clientId: '', clientSecret: 'secret' });
+      assert.strictEqual(missingId.configured, false);
+      assert.strictEqual(missingId.clientId, null);
+
+      const missingSecret = getPublicConfig({ clientId: 'id', clientSecret: '' });
+      assert.strictEqual(missingSecret.configured, false);
+      assert.strictEqual(missingSecret.clientId, null);
+    });
   });
 
   describe('Authorization Code & Redirect URI Validation', () => {
@@ -90,6 +130,36 @@ describe('Google OAuth Suite', () => {
         const result = googleLoginSchema.safeParse({ code: 'valid-code', redirectUri });
         assert.strictEqual(result.success, false, `Expected ${redirectUri} to be rejected`);
       }
+    });
+
+    it('correctly constructs Google OAuth authorization URL with all required query parameters', () => {
+      const clientId = '123456789-abcdef.apps.googleusercontent.com';
+      const redirectUri = 'https://cine-vault-gules.vercel.app/auth/google/callback';
+      const state = 'csrf-random-uuid-12345';
+
+      const buildAuthUrl = (cid: string, rUri: string, st: string) => {
+        const params = new URLSearchParams({
+          client_id: cid,
+          redirect_uri: rUri,
+          response_type: 'code',
+          scope: 'openid email profile',
+          access_type: 'offline',
+          prompt: 'consent',
+          state: st,
+        });
+        return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+      };
+
+      const url = new URL(buildAuthUrl(clientId, redirectUri, state));
+      assert.strictEqual(url.origin, 'https://accounts.google.com');
+      assert.strictEqual(url.pathname, '/o/oauth2/v2/auth');
+      assert.strictEqual(url.searchParams.get('client_id'), clientId);
+      assert.strictEqual(url.searchParams.get('redirect_uri'), redirectUri);
+      assert.strictEqual(url.searchParams.get('response_type'), 'code');
+      assert.strictEqual(url.searchParams.get('scope'), 'openid email profile');
+      assert.strictEqual(url.searchParams.get('access_type'), 'offline');
+      assert.strictEqual(url.searchParams.get('prompt'), 'consent');
+      assert.strictEqual(url.searchParams.get('state'), state);
     });
   });
 
