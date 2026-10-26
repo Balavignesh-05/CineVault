@@ -53,3 +53,12 @@ export async function resetPassword(token: string, password: string) {
   );
   return res.data;
 }
+
+export async function googleLogin(code: string, redirectUri: string) {
+  const res = await api.post<ApiResponse<{ user: User; expiresIn: number }>>(
+    '/auth/google',
+    { code, redirectUri },
+    { skipAuth: true },
+  );
+  return res.data;
+}

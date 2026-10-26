@@ -1,3 +1,6 @@
+import { describe, it } from 'node:test';
+import assert from 'node:assert';
+
 describe('CineVault API Route Suite', () => {
   it('validates API endpoint prefix structure', () => {
     const endpoints = [
@@ -20,7 +23,8 @@ describe('CineVault API Route Suite', () => {
     ];
 
     endpoints.forEach((ep) => {
-      expect(ep.startsWith('/api/v1/')).toBe(true);
+      assert.strictEqual(ep.startsWith('/api/v1/'), true);
     });
   });
 });
+

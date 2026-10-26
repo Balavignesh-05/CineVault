@@ -3,22 +3,27 @@ import { config } from '../config/env';
 
 const resend = config.email.resendApiKey ? new Resend(config.email.resendApiKey) : null;
 
+if (!resend) {
+  console.warn('[Email] RESEND_API_KEY not configured — email delivery is disabled');
+}
+
 export interface EmailResult {
   sent: boolean;
+  messageId?: string;
   reason?: string;
 }
 
 export async function sendPasswordResetEmail(email: string, resetToken: string): Promise<EmailResult> {
-  const resetUrl = `${config.appUrl}/reset-password?token=${resetToken}`;
+  // Use frontendUrl (FRONTEND_URL || APP_URL) so production emails point to Vercel, not localhost
+  const resetUrl = `${config.frontendUrl}/reset-password?token=${resetToken}`;
 
   if (!resend) {
-    console.warn('[Email] RESEND_API_KEY not configured — password reset email not sent');
-    // DO NOT log the token itself
+    console.warn('[Email] Skipped sending password reset email — RESEND_API_KEY not configured');
     return { sent: false, reason: 'EMAIL_NOT_CONFIGURED' };
   }
 
   try {
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: config.email.from,
       to: email,
       subject: 'Reset your CineVault password',
@@ -26,13 +31,19 @@ export async function sendPasswordResetEmail(email: string, resetToken: string):
     });
 
     if (error) {
-      console.error('[Email] Resend delivery error:', error.message);
+      // Log safe error info (name + message), never log API key or token
+      console.error('[Email] Resend rejected email:', error.name, error.message);
       return { sent: false, reason: 'DELIVERY_FAILED' };
     }
 
-    return { sent: true };
+    // Log message ID for delivery tracking
+    const messageId = data?.id;
+    console.info(`[Email] Password reset email accepted by Resend (id: ${messageId ?? 'unknown'})`);
+    return { sent: true, messageId: messageId ?? undefined };
   } catch (err) {
-    console.error('[Email] Resend send error:', (err as Error).message);
+    // Network or SDK error — log safely
+    const errMsg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[Email] Resend send error:', errMsg);
     return { sent: false, reason: 'SEND_ERROR' };
   }
 }

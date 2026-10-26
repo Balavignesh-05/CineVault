@@ -9,6 +9,7 @@ import { authenticate, AuthRequest } from '../middleware/auth';
 import { AppError, AuthError, ConflictError, NotFoundError, ValidationError } from '../utils/errors';
 import { authRateLimiter } from '../middleware/rateLimiter';
 import passwordResetRouter from './password-reset';
+import googleAuthRouter from './google-auth';
 
 const router: Router = Router();
 
@@ -251,5 +252,8 @@ router.get('/me', authenticate, async (req: AuthRequest, res, next) => {
 
 // Password reset routes (/forgot-password, /validate-reset-token, /reset-password)
 router.use('/', passwordResetRouter);
+
+// Google OAuth routes (/google)
+router.use('/', googleAuthRouter);
 
 export default router;

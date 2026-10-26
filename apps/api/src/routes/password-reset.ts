@@ -63,8 +63,13 @@ router.post(
           },
         });
 
-        // Send reset email asynchronously
-        await sendPasswordResetEmail(user.email, rawToken);
+        // Send reset email and log result (do not log token or email)
+        const emailResult = await sendPasswordResetEmail(user.email, rawToken);
+        if (emailResult.sent) {
+          console.info(`[PasswordReset] Reset email accepted (messageId: ${emailResult.messageId ?? 'n/a'})`);
+        } else {
+          console.warn(`[PasswordReset] Reset email not sent (reason: ${emailResult.reason})`);
+        }
       }
 
       // Always return 200 with generic message to avoid email enumeration

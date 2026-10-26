@@ -120,6 +120,30 @@ test.describe('Automated UI Interaction Testing', () => {
     await expect(page.locator('text=failed').or(page.locator('text=Invalid')).or(page.locator('.text-red-400'))).toBeVisible({ timeout: 10000 });
   });
 
+  test('Authentication Pages: Google is the only social provider; Apple and Discord removed', async ({ page }) => {
+    // 1. Verify Sign In page
+    await page.goto('/signin', { waitUntil: 'domcontentloaded' });
+    const googleSignInBtn = page.getByRole('button', { name: /Continue with Google/i });
+    await expect(googleSignInBtn).toBeVisible();
+
+    const appleSignIn = page.locator('button').filter({ hasText: /Apple/i });
+    await expect(appleSignIn).toHaveCount(0);
+
+    const discordSignIn = page.locator('button').filter({ hasText: /Discord/i });
+    await expect(discordSignIn).toHaveCount(0);
+
+    // 2. Verify Sign Up page
+    await page.goto('/signup', { waitUntil: 'domcontentloaded' });
+    const googleSignUpBtn = page.getByRole('button', { name: /Continue with Google/i });
+    await expect(googleSignUpBtn).toBeVisible();
+
+    const appleSignUp = page.locator('button').filter({ hasText: /Apple/i });
+    await expect(appleSignUp).toHaveCount(0);
+
+    const discordSignUp = page.locator('button').filter({ hasText: /Discord/i });
+    await expect(discordSignUp).toHaveCount(0);
+  });
+
   test('Search Autocomplete Panel and Keyboard Dismissal', async ({ page }, testInfo) => {
     const isMobile = testInfo.project.name === 'mobile-chromium';
     if (isMobile) return;

@@ -14,9 +14,12 @@ const envSchema = z.object({
   TMDB_BASE_URL: z.string().url().default('https://api.themoviedb.org/3'),
   TMDB_IMAGE_BASE_URL: z.string().url().default('https://image.tmdb.org/t/p'),
   APP_URL: z.string().url().default('http://localhost:3000'),
+  FRONTEND_URL: z.string().url().optional(),
   API_URL: z.string().url().default('http://localhost:4000'),
   RESEND_API_KEY: z.string().optional(),
-  EMAIL_FROM: z.string().default('CineVault <noreply@cinevault.app>'),
+  EMAIL_FROM: z.string().default('CineVault <onboarding@resend.dev>'),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -50,6 +53,11 @@ export const config = {
     resendApiKey: env.RESEND_API_KEY,
     from: env.EMAIL_FROM,
   },
+  google: {
+    clientId: env.GOOGLE_CLIENT_ID,
+    clientSecret: env.GOOGLE_CLIENT_SECRET,
+  },
   appUrl: env.APP_URL,
+  frontendUrl: env.FRONTEND_URL || env.APP_URL,
   apiUrl: env.API_URL,
 } as const;
