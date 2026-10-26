@@ -68,11 +68,17 @@ export class ApiClient {
             });
             if (!retryResponse.ok) {
               const error = await retryResponse.json().catch(() => ({}));
-              let errorMessage = error?.error?.message ?? 'Request failed';
-              if (retryResponse.status >= 500) {
+              const errorCode: string = error?.error?.code ?? '';
+              let errorMessage: string = error?.error?.message ?? 'Request failed';
+              const AUTH_PASSTHROUGH_CODES = new Set([
+                'REDIRECT_URI_MISMATCH', 'INVALID_OAUTH_CLIENT', 'GOOGLE_NOT_CONFIGURED',
+                'INVALID_AUTH_CODE', 'MISSING_ID_TOKEN', 'INVALID_ID_TOKEN',
+                'EMAIL_NOT_VERIFIED', 'INCOMPLETE_PROFILE',
+              ]);
+              if (retryResponse.status >= 500 && !AUTH_PASSTHROUGH_CODES.has(errorCode)) {
                 errorMessage = 'Service is currently unavailable. Please try again.';
               }
-              throw new ApiError(retryResponse.status, errorMessage, error?.error?.code);
+              throw new ApiError(retryResponse.status, errorMessage, errorCode);
             }
             if (retryResponse.status === 204) return {} as T;
             return retryResponse.json() as Promise<T>;
@@ -84,11 +90,24 @@ export class ApiClient {
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        let errorMessage = error?.error?.message ?? 'Request failed';
-        if (response.status >= 500) {
+        const errorCode: string = error?.error?.code ?? '';
+        let errorMessage: string = error?.error?.message ?? 'Request failed';
+        // For 5xx responses, show a generic message unless it's a known auth-specific error
+        // that has a meaningful user-facing message (e.g., REDIRECT_URI_MISMATCH, INVALID_OAUTH_CLIENT)
+        const AUTH_PASSTHROUGH_CODES = new Set([
+          'REDIRECT_URI_MISMATCH',
+          'INVALID_OAUTH_CLIENT',
+          'GOOGLE_NOT_CONFIGURED',
+          'INVALID_AUTH_CODE',
+          'MISSING_ID_TOKEN',
+          'INVALID_ID_TOKEN',
+          'EMAIL_NOT_VERIFIED',
+          'INCOMPLETE_PROFILE',
+        ]);
+        if (response.status >= 500 && !AUTH_PASSTHROUGH_CODES.has(errorCode)) {
           errorMessage = 'Service is currently unavailable. Please try again.';
         }
-        throw new ApiError(response.status, errorMessage, error?.error?.code);
+        throw new ApiError(response.status, errorMessage, errorCode);
       }
 
       if (response.status === 204) return {} as T;

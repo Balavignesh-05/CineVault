@@ -65,7 +65,24 @@ export default function GoogleCallbackForm() {
       })
       .catch((err) => {
         setState('error');
-        const message = err instanceof Error ? err.message : 'Failed to sign in with Google';
+        // Map specific error codes to user-friendly messages
+        const apiError = err as { status?: number; code?: string; message?: string };
+        let message = 'Failed to sign in with Google. Please try again.';
+        if (apiError.code === 'REDIRECT_URI_MISMATCH') {
+          message = 'Google OAuth redirect URI mismatch. Please contact support.';
+        } else if (apiError.code === 'INVALID_OAUTH_CLIENT') {
+          message = 'Google OAuth is misconfigured. Please contact support.';
+        } else if (apiError.code === 'INVALID_AUTH_CODE') {
+          message = 'The sign-in session expired. Please try again from the start.';
+        } else if (apiError.code === 'EMAIL_NOT_VERIFIED') {
+          message = 'Your Google account email is not verified. Please verify it and try again.';
+        } else if (typeof err === 'object' && err !== null && 'message' in err) {
+          // Use the API message unless it looks like an internal server dump
+          const raw = (err as Error).message;
+          if (raw && raw.length < 200 && !raw.includes('at ')) {
+            message = raw;
+          }
+        }
         setErrorMsg(message);
       });
   }, [searchParams, router, setUser]);

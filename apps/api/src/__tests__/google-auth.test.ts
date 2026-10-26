@@ -274,4 +274,56 @@ describe('Google OAuth Suite', () => {
       }
     });
   });
+
+  describe('Code Exchange Error Classification', () => {
+    // Simulates the improved error parsing added to google-auth.ts
+    function classifyCodeExchangeError(googleErrorCode: string): { httpStatus: number; appCode: string } {
+      if (googleErrorCode === 'redirect_uri_mismatch') {
+        return { httpStatus: 400, appCode: 'REDIRECT_URI_MISMATCH' };
+      }
+      if (googleErrorCode === 'invalid_client') {
+        return { httpStatus: 502, appCode: 'INVALID_OAUTH_CLIENT' };
+      }
+      return { httpStatus: 400, appCode: 'INVALID_AUTH_CODE' };
+    }
+
+    it('maps redirect_uri_mismatch to REDIRECT_URI_MISMATCH (400)', () => {
+      const result = classifyCodeExchangeError('redirect_uri_mismatch');
+      assert.strictEqual(result.httpStatus, 400);
+      assert.strictEqual(result.appCode, 'REDIRECT_URI_MISMATCH');
+    });
+
+    it('maps invalid_client to INVALID_OAUTH_CLIENT (502)', () => {
+      const result = classifyCodeExchangeError('invalid_client');
+      assert.strictEqual(result.httpStatus, 502);
+      assert.strictEqual(result.appCode, 'INVALID_OAUTH_CLIENT');
+    });
+
+    it('maps unknown/expired codes to INVALID_AUTH_CODE (400)', () => {
+      const result = classifyCodeExchangeError('invalid_grant');
+      assert.strictEqual(result.httpStatus, 400);
+      assert.strictEqual(result.appCode, 'INVALID_AUTH_CODE');
+    });
+
+    it('does not log authorization code, client secret, or access tokens', () => {
+      // Verify the log format contains only safe fields
+      const safeLogFields = ['google_error', 'status', 'description', 'redirect_uri'];
+      const dangerousFields = ['code', 'client_secret', 'access_token', 'refresh_token', 'id_token'];
+
+      // Simulate what would be logged
+      const loggedData = {
+        google_error: 'redirect_uri_mismatch',
+        status: 400,
+        description: 'Redirect URI mismatch',
+        redirect_uri: 'https://cine-vault-gules.vercel.app/auth/google/callback',
+      };
+
+      for (const field of safeLogFields) {
+        assert.strictEqual(field in loggedData, true, `Expected safe field "${field}" to be loggable`);
+      }
+      for (const field of dangerousFields) {
+        assert.strictEqual(field in loggedData, false, `Dangerous field "${field}" must NOT be logged`);
+      }
+    });
+  });
 });

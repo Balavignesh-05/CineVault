@@ -84,8 +84,38 @@ router.post(
       try {
         const tokenResponse = await oauth2Client.getToken(body.code);
         tokens = tokenResponse.tokens;
-      } catch (err) {
-        console.error('[GoogleAuth] Code exchange failed:', (err as Error).message);
+      } catch (err: unknown) {
+        // Extract Google-specific error code from GaxiosError without leaking sensitive data
+        const googleErrorCode: string =
+          (err as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'unknown';
+        const googleErrorDesc: string =
+          (err as { response?: { data?: { error_description?: string } } })?.response?.data?.error_description ?? '';
+        const statusCode: number =
+          (err as { response?: { status?: number } })?.response?.status ?? 0;
+
+        console.error(
+          '[GoogleAuth] Code exchange failed | google_error=%s | status=%d | description=%s | redirect_uri=%s',
+          googleErrorCode,
+          statusCode,
+          // Truncate description to avoid leaking anything sensitive
+          googleErrorDesc.substring(0, 120),
+          body.redirectUri,
+        );
+
+        if (googleErrorCode === 'redirect_uri_mismatch') {
+          throw new AppError(
+            'OAuth redirect URI mismatch. Ensure the redirect URI is registered in Google Cloud Console.',
+            400,
+            'REDIRECT_URI_MISMATCH',
+          );
+        }
+        if (googleErrorCode === 'invalid_client') {
+          throw new AppError(
+            'Google OAuth client credentials are invalid or misconfigured.',
+            502,
+            'INVALID_OAUTH_CLIENT',
+          );
+        }
         throw new AppError('Invalid or expired authorization code', 400, 'INVALID_AUTH_CODE');
       }
 
