@@ -33,7 +33,7 @@ import settingsRouter from './routes/settings';
 
 import { rateLimiter } from './middleware/rateLimiter';
 
-// "?"? BigInt JSON Serialization Polyfill
+// BigInt JSON Serialization Polyfill
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
@@ -47,7 +47,7 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(compression());
 app.use(rateLimiter);
 
-// ── CORS ──────────────────────────────────────────────────────────────────────
+// ── CORS ─────────────────────────────────────────────────────────────────────
 const allowedOrigins = Array.from(
   new Set(
     [
@@ -79,7 +79,7 @@ app.use(
   }),
 );
 
-// ── Body & Cookie Parsing ──────────────────────────────────────────────────────────────
+// ── Body & Cookie Parsing ─────────────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -128,15 +128,29 @@ app.use(errorHandler);
 // ── Server Startup ────────────────────────────────────────────────────────────
 async function bootstrap() {
   try {
-    await prisma.$connect().catch((err) => console.warn('⚠️ PostgreSQL connection deferred:', err.message));
-    await redis.ping().catch((err) => console.warn('⚠️ Redis connection deferred:', err.message));
+    await prisma.$connect().catch((err) => console.warn('PostgreSQL connection deferred:', err.message));
+    await redis.ping().catch((err) => console.warn('Redis connection deferred:', err.message));
+
+    // Email configuration diagnostics at startup (safe — logs presence only, never key values)
+    if (!config.email.resendApiKey) {
+      console.warn('[Email] STARTUP WARNING: RESEND_API_KEY is not set — password reset emails will NOT be delivered.');
+    } else if (config.nodeEnv === 'production' && config.email.from.includes('onboarding@resend.dev')) {
+      console.warn(
+        '[Email] STARTUP WARNING: EMAIL_FROM uses the Resend sandbox sender (onboarding@resend.dev). ' +
+          'Emails will only be delivered to the verified Resend account owner email address. ' +
+          'To send to all users: verify a custom domain in Resend and update EMAIL_FROM on Render.',
+      );
+    } else {
+      const senderDomain = config.email.from.replace(/.*<(.+)>.*/, '$1').split('@')[1] ?? 'unknown';
+      console.info(`[Email] Email delivery configured | api_key_set=true sender_domain=${senderDomain}`);
+    }
 
     app.listen(config.port, () => {
-      console.log(`🚀 CineVault API running on http://localhost:${config.port}`);
+      console.log(`CineVault API running on http://localhost:${config.port}`);
       console.log(`   Environment: ${config.nodeEnv}`);
     });
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    console.error('Failed to start server:', error);
   }
 }
 
