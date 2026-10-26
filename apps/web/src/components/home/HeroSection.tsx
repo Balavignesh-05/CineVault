@@ -95,10 +95,16 @@ export function HeroSection({ movies }: HeroSectionProps) {
 
   const primaryGenre = genreList[0] || null;
 
-  const backdropUrl = backdrop
-    ? (backdrop.startsWith('http') ? backdrop : `https://image.tmdb.org/t/p/w1280${backdrop}`)
-    : poster
-    ? (poster.startsWith('http') ? poster : `https://image.tmdb.org/t/p/w1280${poster}`)
+  const [backdropError, setBackdropError] = useState(false);
+
+  useEffect(() => {
+    setBackdropError(false);
+  }, [currentIndex]);
+
+  const backdropUrl = !backdropError && backdrop
+    ? (backdrop.startsWith('http') ? backdrop : `https://image.tmdb.org/t/p/w1280${backdrop.startsWith('/') ? backdrop : `/${backdrop}`}`)
+    : !backdropError && poster
+    ? (poster.startsWith('http') ? poster : `https://image.tmdb.org/t/p/w1280${poster.startsWith('/') ? poster : `/${poster}`}`)
     : null;
 
   return (
@@ -122,6 +128,7 @@ export function HeroSection({ movies }: HeroSectionProps) {
               className="object-cover object-[center_20%]"
               sizes="100vw"
               unoptimized
+              onError={() => setBackdropError(true)}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#161b24] to-[#0b0e14]" />

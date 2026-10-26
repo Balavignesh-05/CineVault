@@ -11,6 +11,7 @@ export interface EmailResult {
   sent: boolean;
   messageId?: string;
   reason?: string;
+  errorCategory?: string;
 }
 
 export async function sendPasswordResetEmail(email: string, resetToken: string): Promise<EmailResult> {
@@ -18,8 +19,8 @@ export async function sendPasswordResetEmail(email: string, resetToken: string):
   const resetUrl = `${config.frontendUrl}/reset-password?token=${resetToken}`;
 
   if (!resend) {
-    console.warn('[Email] Skipped sending password reset email — RESEND_API_KEY not configured');
-    return { sent: false, reason: 'EMAIL_NOT_CONFIGURED' };
+    console.warn('[Email] Skipped sending password reset email | provider_status=disabled reason=RESEND_API_KEY_not_configured');
+    return { sent: false, reason: 'EMAIL_NOT_CONFIGURED', errorCategory: 'configuration_error' };
   }
 
   try {
@@ -31,20 +32,22 @@ export async function sendPasswordResetEmail(email: string, resetToken: string):
     });
 
     if (error) {
-      // Log safe error info (name + message), never log API key or token
-      console.error('[Email] Resend rejected email:', error.name, error.message);
-      return { sent: false, reason: 'DELIVERY_FAILED' };
+      // Log safe diagnostic details without exposing secrets or personal data
+      console.error(
+        `[Email] Resend delivery rejected | provider_status=rejected error_category=${error.name} reason=${error.message}`,
+      );
+      return { sent: false, reason: 'DELIVERY_FAILED', errorCategory: error.name };
     }
 
-    // Log message ID for delivery tracking
+    // Log message ID / request ID for delivery tracking
     const messageId = data?.id;
-    console.info(`[Email] Password reset email accepted by Resend (id: ${messageId ?? 'unknown'})`);
+    console.info(`[Email] Resend delivery accepted | provider_status=accepted request_id=${messageId ?? 'unknown'}`);
     return { sent: true, messageId: messageId ?? undefined };
   } catch (err) {
     // Network or SDK error — log safely
     const errMsg = err instanceof Error ? err.message : 'Unknown error';
-    console.error('[Email] Resend send error:', errMsg);
-    return { sent: false, reason: 'SEND_ERROR' };
+    console.error(`[Email] Resend send error | provider_status=error error_category=network_sdk error=${errMsg}`);
+    return { sent: false, reason: 'SEND_ERROR', errorCategory: 'network_error' };
   }
 }
 

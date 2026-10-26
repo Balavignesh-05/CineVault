@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getTvDetails, normalizeSeriesDetails } from '@/lib/tmdb/client';
+import { getTvDetails, normalizeSeriesDetails, getBackdropUrl, getPosterUrl } from '@/lib/tmdb/client';
 import { CastSection } from '@/components/movie/CastSection';
 import { CrewSection } from '@/components/movie/CrewSection';
 import { SeriesDetailsSection } from '@/components/series/SeriesDetailsSection';
@@ -56,8 +56,8 @@ export default async function SeriesDetailPage({ params }: Props) {
   }
 
   const series = normalizeSeriesDetails(rawSeries);
-  const backdropUrl = series.backdropPath ? `https://image.tmdb.org/t/p/w1280${series.backdropPath}` : null;
-  const posterUrl = series.posterPath ? `https://image.tmdb.org/t/p/w500${series.posterPath}` : null;
+  const backdropUrl = getBackdropUrl(series.backdropPath, 'large');
+  const posterUrl = getPosterUrl(series.posterPath, 'large');
 
   const rawCast = rawSeries.credits?.cast || [];
   const rawCrew = rawSeries.credits?.crew || [];

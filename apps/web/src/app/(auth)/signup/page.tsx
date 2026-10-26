@@ -56,6 +56,8 @@ export default function SignUpPage() {
     const url = getGoogleOAuthUrl();
     if (url) {
       window.location.href = url;
+    } else {
+      setError('Google Sign-In is not configured yet. Please set NEXT_PUBLIC_GOOGLE_CLIENT_ID in Vercel settings.');
     }
   };
 
@@ -213,7 +215,7 @@ export default function SignUpPage() {
       </div>
 
       {/* ── Google Sign-Up Button ────────────────────────────────────── */}
-      {GOOGLE_CLIENT_ID ? (
+      <div className="space-y-2">
         <button
           type="button"
           onClick={handleGoogleLogin}
@@ -239,11 +241,13 @@ export default function SignUpPage() {
           </svg>
           <span>Continue with Google</span>
         </button>
-      ) : (
-        <div className="w-full p-3 rounded-xl bg-yellow-500/5 border border-yellow-500/20 text-yellow-500/70 text-xs text-center">
-          Google Sign-In not configured — <code className="text-[10px]">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> is missing
-        </div>
-      )}
+
+        {!GOOGLE_CLIENT_ID && (
+          <p className="text-[11px] text-[#9AA8B7]/70 text-center">
+            Google Sign-In configuration pending (<code className="text-[10px] text-amber-400/90 font-mono">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code>)
+          </p>
+        )}
+      </div>
 
       {/* ── Footer Link ─────────────────────────────────────────────── */}
       <div className="pt-1 text-center text-xs sm:text-sm text-[#9AA8B7]">

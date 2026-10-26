@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getMovieDetails, normalizeMovieDetails } from '@/lib/tmdb/client';
+import { getMovieDetails, normalizeMovieDetails, getBackdropUrl, getPosterUrl } from '@/lib/tmdb/client';
 import { MovieStatsBar } from '@/components/movie/MovieStatsBar';
 import { WhereToWatchCard } from '@/components/movie/WhereToWatchCard';
 import { MovieInfoTabs } from '@/components/movie/MovieInfoTabs';
@@ -57,12 +57,8 @@ export default async function MovieDetailPage({ params }: Props) {
   }
 
   const movie = normalizeMovieDetails(rawMovie);
-  const backdropUrl = movie.backdropPath
-    ? `https://image.tmdb.org/t/p/w1280${movie.backdropPath}`
-    : null;
-  const posterUrl = movie.posterPath
-    ? `https://image.tmdb.org/t/p/w500${movie.posterPath}`
-    : null;
+  const backdropUrl = getBackdropUrl(movie.backdropPath, 'large');
+  const posterUrl = getPosterUrl(movie.posterPath, 'large');
 
   const rawCast = rawMovie.credits?.cast || [];
   const rawCrew = rawMovie.credits?.crew || [];

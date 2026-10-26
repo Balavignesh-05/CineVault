@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { SeriesDetailsData } from '@/lib/tmdb/types';
+import { getBackdropUrl, getPosterUrl } from '@/lib/tmdb/client';
 import { RatingStars } from '@/components/movie/RatingStars';
 import { Badge } from '@/components/ui/badge';
 import { SeriesActions } from '@/components/series/SeriesActions';
@@ -9,8 +10,8 @@ interface SeriesHeroProps {
 }
 
 export function SeriesHero({ series }: SeriesHeroProps) {
-  const backdropUrl = series.backdropPath ? `https://image.tmdb.org/t/p/w1280${series.backdropPath}` : null;
-  const posterUrl = series.posterPath ? `https://image.tmdb.org/t/p/w500${series.posterPath}` : null;
+  const backdropUrl = getBackdropUrl(series.backdropPath, 'large');
+  const posterUrl = getPosterUrl(series.posterPath, 'large');
 
   const yearRange = series.firstAirDate 
     ? `${new Date(series.firstAirDate).getFullYear()} - ${series.status === 'Ended' && series.lastAirDate ? new Date(series.lastAirDate).getFullYear() : 'Present'}`
@@ -25,6 +26,7 @@ export function SeriesHero({ series }: SeriesHeroProps) {
             alt={`${series.title} backdrop`}
             fill
             priority
+            unoptimized
             className="object-cover object-top"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-base)] via-[var(--color-bg-base)]/80 to-transparent" />
@@ -42,6 +44,7 @@ export function SeriesHero({ series }: SeriesHeroProps) {
                   src={posterUrl}
                   alt={series.title}
                   fill
+                  unoptimized
                   className="object-cover"
                 />
               </div>

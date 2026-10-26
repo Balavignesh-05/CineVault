@@ -48,9 +48,31 @@ app.use(compression());
 app.use(rateLimiter);
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+const allowedOrigins = Array.from(
+  new Set(
+    [
+      config.corsOrigin,
+      config.frontendUrl,
+      config.appUrl,
+      'https://cine-vault-gules.vercel.app',
+      'http://localhost:3000',
+    ].filter(Boolean) as string[],
+  ),
+);
+
 app.use(
   cors({
-    origin: config.corsOrigin,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, or server health checks)
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app')
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

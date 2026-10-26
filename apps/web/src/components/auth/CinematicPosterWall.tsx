@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
+import { Film } from 'lucide-react';
 
 // Curated selection of iconic, recognizable film posters with accurate TMDB paths
 const ROW_1 = [
@@ -30,29 +31,74 @@ const ROW_3 = [
   { id: 550, title: 'Fight Club', path: '/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg' },
   { id: 278, title: 'The Shawshank Redemption', path: '/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg' },
   { id: 238, title: 'The Godfather', path: '/3bhkrj58Vtu7enYsRolD1fZdja1.jpg' },
-  { id: 120, title: 'The Lord of the Rings', path: '/6oom5QYQ2yQTMJIbnvbkBL9cDK6.jpg' },
-  { id: 37799, title: 'The Social Network', path: '/n0ybibhJtQ5icDqTpTzbRytNDPx.jpg' },
+  { id: 120, title: 'The Lord of the Rings', path: '/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg' },
+  { id: 37799, title: 'The Social Network', path: '/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg' },
   { id: 769, title: 'Goodfellas', path: '/aKuFiU82s5ISJpGZp7YkIr3kCUd.jpg' },
   { id: 807, title: 'Seven', path: '/6yoghtyTpznpBik8EngEmJskVUO.jpg' },
   { id: 13, title: 'Forrest Gump', path: '/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg' },
 ];
 
 const ROW_4 = [
-  { id: 313369, title: 'La La Land', path: '/uDO8zWDhfWwoFdKS4fzkVJt0Rf0.jpg' },
-  { id: 372058, title: 'Your Name.', path: '/q719jXXEzOoYaps6qFsC8llRaQ.jpg' },
+  { id: 313369, title: 'La La Land', path: '/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg' },
+  { id: 372058, title: 'Your Name.', path: '/od22ftNnyag0TTxcnJhlsu3aLoU.jpg' },
   { id: 105, title: 'Back to the Future', path: '/fNOH9f1aA7XRTzl1sAOx9iF553Q.jpg' },
-  { id: 1891, title: 'The Empire Strikes Back', path: '/nNAeTmF4nnKjqSsrni89KrAaAc1.jpg' },
+  { id: 1891, title: 'The Empire Strikes Back', path: '/nNAeTmF4CtdSgMDplXTDPOpYzsX.jpg' },
   { id: 299536, title: 'Avengers: Infinity War', path: '/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg' },
   { id: 597, title: 'Titanic', path: '/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg' },
   { id: 77338, title: 'The Intouchables', path: '/1hRoyzDtpgMU7Dz4JF22RANzQO7.jpg' },
   { id: 11, title: 'Star Wars', path: '/6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg' },
 ];
 
+interface PosterItem {
+  id: number;
+  title: string;
+  path: string;
+}
+
+function PosterCard({ poster }: { poster: PosterItem }) {
+  const [hasError, setHasError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="relative w-[120px] sm:w-[145px] md:w-[165px] aspect-[2/3] shrink-0 rounded-lg overflow-hidden bg-[#131A22] border border-[#273442]/60 shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
+      {/* Background Graceful Cinema Placeholder (shown while loading or on error) */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center p-3 bg-gradient-to-b from-[#182029] via-[#10151c] to-[#0b0e14] text-center select-none">
+        <div className="w-8 h-8 rounded-full bg-[#35D6A0]/10 border border-[#35D6A0]/25 flex items-center justify-center text-[#35D6A0] mb-2">
+          <Film size={14} />
+        </div>
+        <span className="text-[11px] font-semibold text-[#F4F3EC]/80 line-clamp-2 leading-tight">
+          {poster.title}
+        </span>
+        <span className="text-[9px] uppercase tracking-wider text-[#9AA8B7]/60 mt-1 font-mono">
+          CineVault
+        </span>
+      </div>
+
+      {/* Real Poster Image (hidden on error to avoid broken image icons) */}
+      {!hasError && (
+        <Image
+          src={`https://image.tmdb.org/t/p/w342${poster.path}`}
+          alt={poster.title}
+          fill
+          sizes="(max-width: 640px) 120px, (max-width: 768px) 145px, 165px"
+          className={`object-cover filter brightness-[1.08] contrast-[1.06] saturate-[1.12] transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          loading="lazy"
+          unoptimized
+          onLoad={() => setIsLoaded(true)}
+          onError={() => setHasError(true)}
+        />
+      )}
+    </div>
+  );
+}
+
 function PosterRow({
   items,
   direction = 'left',
 }: {
-  items: typeof ROW_1;
+  items: PosterItem[];
   direction?: 'left' | 'right';
 }) {
   // Duplicate array once for seamless continuous infinite marquee
@@ -67,20 +113,7 @@ function PosterRow({
         style={{ width: 'max-content' }}
       >
         {duplicated.map((poster, index) => (
-          <div
-            key={`${poster.id}-${index}`}
-            className="relative w-[120px] sm:w-[145px] md:w-[165px] aspect-[2/3] shrink-0 rounded-lg overflow-hidden bg-[#131A22] border border-[#273442]/60 shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
-          >
-            <Image
-              src={`https://image.tmdb.org/t/p/w342${poster.path}`}
-              alt={poster.title}
-              fill
-              sizes="(max-width: 640px) 120px, (max-width: 768px) 145px, 165px"
-              className="object-cover filter brightness-[1.08] contrast-[1.06] saturate-[1.12]"
-              loading="lazy"
-              unoptimized
-            />
-          </div>
+          <PosterCard key={`${poster.id}-${index}`} poster={poster} />
         ))}
       </div>
       {/* ── Glowing Jade Shelf Accent Line under each row ────────── */}

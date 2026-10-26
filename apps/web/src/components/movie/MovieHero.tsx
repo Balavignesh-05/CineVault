@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { MovieDetailsData } from '@/lib/tmdb/types';
+import { getBackdropUrl, getPosterUrl } from '@/lib/tmdb/client';
 import { RatingDisplay } from '@/components/movie/RatingDisplay';
 import { RatingStars } from '@/components/movie/RatingStars';
 import { Badge } from '@/components/ui/badge';
@@ -10,8 +11,8 @@ interface MovieHeroProps {
 }
 
 export function MovieHero({ movie }: MovieHeroProps) {
-  const backdropUrl = movie.backdropPath ? `https://image.tmdb.org/t/p/w1280${movie.backdropPath}` : null;
-  const posterUrl = movie.posterPath ? `https://image.tmdb.org/t/p/w500${movie.posterPath}` : null;
+  const backdropUrl = getBackdropUrl(movie.backdropPath, 'large');
+  const posterUrl = getPosterUrl(movie.posterPath, 'large');
 
   const runtimeStr = movie.runtime 
     ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
@@ -26,6 +27,7 @@ export function MovieHero({ movie }: MovieHeroProps) {
             alt={`${movie.title} backdrop`}
             fill
             priority
+            unoptimized
             className="object-cover object-top"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-base)] via-[var(--color-bg-base)]/80 to-transparent" />
@@ -43,6 +45,7 @@ export function MovieHero({ movie }: MovieHeroProps) {
                   src={posterUrl}
                   alt={movie.title}
                   fill
+                  unoptimized
                   className="object-cover"
                 />
               </div>

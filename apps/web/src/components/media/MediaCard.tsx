@@ -46,7 +46,7 @@ export function MediaCard({
   );
 
   const posterUrl = posterPath && !hasImageError
-    ? (posterPath.startsWith('http') ? posterPath : `https://image.tmdb.org/t/p/w500${posterPath}`)
+    ? (posterPath.startsWith('http') ? posterPath : `https://image.tmdb.org/t/p/w500${posterPath.startsWith('/') ? posterPath : `/${posterPath}`}`)
     : null;
 
   return (

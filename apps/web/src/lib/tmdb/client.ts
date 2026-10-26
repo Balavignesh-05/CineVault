@@ -59,7 +59,8 @@ export function getPosterUrl(
   size: keyof typeof posterSize = 'large',
 ): string | null {
   if (!path) return null;
-  return `${TMDB_IMAGE_BASE}/${posterSize[size]}${path}`;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  return `${TMDB_IMAGE_BASE}/${posterSize[size]}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
 export function getBackdropUrl(
@@ -67,7 +68,8 @@ export function getBackdropUrl(
   size: keyof typeof backdropSize = 'large',
 ): string | null {
   if (!path) return null;
-  return `${TMDB_IMAGE_BASE}/${backdropSize[size]}${path}`;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  return `${TMDB_IMAGE_BASE}/${backdropSize[size]}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
 export function getProfileUrl(
@@ -75,12 +77,14 @@ export function getProfileUrl(
   size: keyof typeof profileSize = 'medium',
 ): string | null {
   if (!path) return null;
-  return `${TMDB_IMAGE_BASE}/${profileSize[size]}${path}`;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  return `${TMDB_IMAGE_BASE}/${profileSize[size]}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
 export function getLogoUrl(path: string | null): string | null {
   if (!path) return null;
-  return `${TMDB_IMAGE_BASE}/w500${path}`;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  return `${TMDB_IMAGE_BASE}/w500${path.startsWith('/') ? path : `/${path}`}`;
 }
 
 function getApiKey(): string {
