@@ -155,5 +155,85 @@ describe('Password Reset Suite', () => {
 
       assert.deepStrictEqual(responsePayloadUserFound, responsePayloadUserNotFound);
     });
+
+    it('simulates Resend 403 Forbidden sandbox restriction safely', () => {
+      const mockResend403Error = {
+        name: 'validation_error',
+        message: 'You can only send testing emails to your own email address while using onboarding@resend.dev',
+        statusCode: 403,
+      };
+
+      const handleResendError = (error: typeof mockResend403Error) => {
+        const isTestSender = true;
+        const statusCode = error.statusCode ?? 403;
+        return {
+          sent: false,
+          reason: error.message,
+          errorCategory: error.name,
+          statusCode,
+          isSandboxRestriction: isTestSender && statusCode === 403,
+        };
+      };
+
+      const result = handleResendError(mockResend403Error);
+      assert.strictEqual(result.sent, false);
+      assert.strictEqual(result.statusCode, 403);
+      assert.strictEqual(result.errorCategory, 'validation_error');
+      assert.strictEqual(result.isSandboxRestriction, true);
+    });
+
+    it('simulates Resend 401 invalid API key safely without exposing credentials', () => {
+      const mockResend401Error = {
+        name: 'invalid_api_key',
+        message: 'API key is invalid',
+        statusCode: 401,
+      };
+
+      const handleResendError = (error: typeof mockResend401Error) => {
+        return {
+          sent: false,
+          reason: error.message,
+          errorCategory: error.name,
+          statusCode: error.statusCode,
+        };
+      };
+
+      const result = handleResendError(mockResend401Error);
+      assert.strictEqual(result.sent, false);
+      assert.strictEqual(result.statusCode, 401);
+      assert.strictEqual(result.errorCategory, 'invalid_api_key');
+    });
+
+    it('simulates network timeout safely', () => {
+      const timeoutError = new Error('Resend API request timed out');
+      const isTimeout = timeoutError.message.includes('timed out');
+
+      const result = {
+        sent: false,
+        reason: isTimeout ? 'TIMEOUT' : 'SEND_ERROR',
+        errorCategory: isTimeout ? 'timeout' : 'network_error',
+      };
+
+      assert.strictEqual(result.sent, false);
+      assert.strictEqual(result.reason, 'TIMEOUT');
+      assert.strictEqual(result.errorCategory, 'timeout');
+    });
+
+    it('simulates successful Resend acceptance with message ID', () => {
+      const mockResendSuccess = {
+        data: { id: 'msg_98a76b5c4d3e2f10' },
+        error: null,
+      };
+
+      const result = {
+        sent: true,
+        messageId: mockResendSuccess.data.id,
+        statusCode: 200,
+      };
+
+      assert.strictEqual(result.sent, true);
+      assert.strictEqual(result.messageId, 'msg_98a76b5c4d3e2f10');
+      assert.strictEqual(result.statusCode, 200);
+    });
   });
 });

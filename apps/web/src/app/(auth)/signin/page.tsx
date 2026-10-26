@@ -7,6 +7,7 @@ import { Eye, EyeOff, Loader2, LogIn, Mail, Lock, RefreshCw } from 'lucide-react
 import { login } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
 import { useAuthStore } from '@/store/auth';
+import { cn } from '@/lib/utils';
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -200,7 +201,15 @@ export default function SignInPage() {
         <button
           type="button"
           onClick={handleGoogleLogin}
-          className="w-full h-11 rounded-xl bg-[#0B0F14] border border-[#273442] hover:border-[#9AA8B7]/50 flex items-center justify-center gap-3 transition-all text-sm font-medium text-[#F4F3EC] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#35D6A0] hover:bg-[#131A22]"
+          disabled={!GOOGLE_CLIENT_ID}
+          aria-label="Continue with Google"
+          title={!GOOGLE_CLIENT_ID ? 'Google Sign-In configuration required' : 'Continue with Google'}
+          className={cn(
+            'w-full h-11 rounded-xl bg-[#0B0F14] border border-[#273442] flex items-center justify-center gap-3 transition-all text-sm font-medium text-[#F4F3EC] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#35D6A0]',
+            GOOGLE_CLIENT_ID
+              ? 'hover:border-[#9AA8B7]/50 hover:bg-[#131A22] cursor-pointer'
+              : 'opacity-50 cursor-not-allowed',
+          )}
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -225,7 +234,7 @@ export default function SignInPage() {
 
         {!GOOGLE_CLIENT_ID && (
           <p className="text-[11px] text-[#9AA8B7]/70 text-center">
-            Google Sign-In configuration pending (<code className="text-[10px] text-amber-400/90 font-mono">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code>)
+            Google Sign-In is unavailable until configured in Vercel (<code className="text-[10px] text-amber-400/90 font-mono">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code>)
           </p>
         )}
       </div>

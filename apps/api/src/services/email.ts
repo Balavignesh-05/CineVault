@@ -12,7 +12,10 @@ export interface EmailResult {
   messageId?: string;
   reason?: string;
   errorCategory?: string;
+  statusCode?: number;
 }
+
+const EMAIL_TIMEOUT_MS = 10000;
 
 export async function sendPasswordResetEmail(email: string, resetToken: string): Promise<EmailResult> {
   // Use frontendUrl (FRONTEND_URL || APP_URL) so production emails point to Vercel, not localhost
@@ -23,31 +26,55 @@ export async function sendPasswordResetEmail(email: string, resetToken: string):
     return { sent: false, reason: 'EMAIL_NOT_CONFIGURED', errorCategory: 'configuration_error' };
   }
 
+  const isTestSender = config.email.from.includes('onboarding@resend.dev');
+
   try {
-    const { data, error } = await resend.emails.send({
+    const sendPromise = resend.emails.send({
       from: config.email.from,
       to: email,
       subject: 'Reset your CineVault password',
       html: buildResetEmailHtml(resetUrl),
     });
 
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Resend API request timed out')), EMAIL_TIMEOUT_MS),
+    );
+
+    const { data, error } = (await Promise.race([sendPromise, timeoutPromise])) as {
+      data: { id: string } | null;
+      error: { name: string; message: string; statusCode?: number } | null;
+    };
+
     if (error) {
+      const statusCode = error.statusCode ?? (error.message?.includes('only send to') ? 403 : 400);
       // Log safe diagnostic details without exposing secrets or personal data
       console.error(
-        `[Email] Resend delivery rejected | provider_status=rejected error_category=${error.name} reason=${error.message}`,
+        `[Email] Resend delivery rejected | provider_status=rejected error_category=${error.name} status=${statusCode} reason=${error.message}`,
       );
-      return { sent: false, reason: 'DELIVERY_FAILED', errorCategory: error.name };
+      if (isTestSender && (statusCode === 403 || error.message?.includes('only send to'))) {
+        console.warn(
+          '[Email] Sandbox restriction notice: onboarding@resend.dev can only send to the verified Resend account owner email. For arbitrary recipients, verify a custom domain and update EMAIL_FROM.',
+        );
+      }
+      return { sent: false, reason: error.message, errorCategory: error.name, statusCode };
     }
 
     // Log message ID / request ID for delivery tracking
     const messageId = data?.id;
     console.info(`[Email] Resend delivery accepted | provider_status=accepted request_id=${messageId ?? 'unknown'}`);
-    return { sent: true, messageId: messageId ?? undefined };
+    return { sent: true, messageId: messageId ?? undefined, statusCode: 200 };
   } catch (err) {
-    // Network or SDK error — log safely
+    // Network, SDK, or timeout error — log safely
     const errMsg = err instanceof Error ? err.message : 'Unknown error';
-    console.error(`[Email] Resend send error | provider_status=error error_category=network_sdk error=${errMsg}`);
-    return { sent: false, reason: 'SEND_ERROR', errorCategory: 'network_error' };
+    const isTimeout = errMsg.includes('timed out');
+    console.error(
+      `[Email] Resend send error | provider_status=error error_category=${isTimeout ? 'timeout' : 'network_error'} error=${errMsg}`,
+    );
+    return {
+      sent: false,
+      reason: isTimeout ? 'TIMEOUT' : 'SEND_ERROR',
+      errorCategory: isTimeout ? 'timeout' : 'network_error',
+    };
   }
 }
 
