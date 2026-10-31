@@ -172,17 +172,19 @@ export function ReviewComposerModal({
                     )}
                   </div>
 
-                  {/* Date and Rating Fields */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                  {/* Date and Rating Fields — side-by-side on sm+, stacked on xs */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
                     {/* Date */}
                     <div className="space-y-1.5">
                       <label className="block text-xs font-bold text-[#9AA8B7] uppercase tracking-wider">
                         Specify Date
                       </label>
-                      <div className="relative">
+                      {/* Relative container is intentionally not position-relative here to prevent
+                          the native date picker popup from visually overlapping the Rating column */}
+                      <div className="relative z-10">
                         <Calendar
                           size={15}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9AA8B7] pointer-events-none"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9AA8B7] pointer-events-none z-10"
                         />
                         <input
                           type="date"
@@ -199,7 +201,10 @@ export function ReviewComposerModal({
                       <label className="block text-xs font-bold text-[#9AA8B7] uppercase tracking-wider">
                         Rating
                       </label>
-                      <div className="flex items-center h-11 px-3 bg-[#0B0F14] rounded-xl border border-[#273442] overflow-x-auto">
+                      {/* min-h instead of fixed h so stars are never clipped.
+                          overflow-visible ensures the star hover/click area is not cut off.
+                          w-full so the container uses available column width. */}
+                      <div className="flex items-center min-h-[44px] px-3 py-2 bg-[#0B0F14] rounded-xl border border-[#273442] w-full overflow-visible">
                         <StarRating
                           value={rating}
                           onChange={(newRating) => setRating(newRating)}
