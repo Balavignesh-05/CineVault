@@ -172,19 +172,23 @@ export function ReviewComposerModal({
                     )}
                   </div>
 
-                  {/* Date and Rating Fields — side-by-side on sm+, stacked on xs */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+                  {/* Date and Rating Fields — always single-column.
+                      A two-column layout was attempted but the form column
+                      (modal max-w-2xl minus poster minus padding) is only ~204 px at
+                      the sm breakpoint (640 px viewport), which is narrower than the
+                      228 px required by five md-size stars plus the "Not rated" label.
+                      Stacking them vertically is the only layout that works at every
+                      supported viewport width (375 px – 1440 px). */}
+                  <div className="space-y-4">
                     {/* Date */}
                     <div className="space-y-1.5">
                       <label className="block text-xs font-bold text-[#9AA8B7] uppercase tracking-wider">
                         Specify Date
                       </label>
-                      {/* Relative container is intentionally not position-relative here to prevent
-                          the native date picker popup from visually overlapping the Rating column */}
-                      <div className="relative z-10">
+                      <div className="relative">
                         <Calendar
                           size={15}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9AA8B7] pointer-events-none z-10"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9AA8B7] pointer-events-none"
                         />
                         <input
                           type="date"
@@ -196,15 +200,14 @@ export function ReviewComposerModal({
                       </div>
                     </div>
 
-                    {/* Rating */}
+                    {/* Rating — rendered below the date, never beside it.
+                        min-h keeps the box the same visual height as the date input.
+                        overflow-visible lets the star hover area extend beyond the box. */}
                     <div className="space-y-1.5">
                       <label className="block text-xs font-bold text-[#9AA8B7] uppercase tracking-wider">
                         Rating
                       </label>
-                      {/* min-h instead of fixed h so stars are never clipped.
-                          overflow-visible ensures the star hover/click area is not cut off.
-                          w-full so the container uses available column width. */}
-                      <div className="flex items-center min-h-[44px] px-3 py-2 bg-[#0B0F14] rounded-xl border border-[#273442] w-full overflow-visible">
+                      <div className="flex items-center min-h-[44px] w-full px-3 py-2 bg-[#0B0F14] rounded-xl border border-[#273442] overflow-visible">
                         <StarRating
                           value={rating}
                           onChange={(newRating) => setRating(newRating)}
